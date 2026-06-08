@@ -1,6 +1,6 @@
 ---
 name: fledge-test
-description: Write the failing tests listed in a phase's PLAN.md — TDD red stage. Tests must fail for the right reason (missing implementation, not missing imports). Use when the user says "write the tests for <phase>", "start TDD", or after /fledge-review plan passes.
+description: Write the failing tests listed in a phase's PLAN.md — TDD red stage. Tests must fail for the right reason (missing implementation, not missing imports). Use when the user says "write the tests for <phase>", "start TDD", or after /fledge:fledge-review plan passes.
 version: 0.1.0
 ---
 
@@ -68,12 +68,12 @@ Add failing tests for phase <id> (TDD red)
 - **A test would require unimplemented infrastructure to even fail cleanly** (e.g. need a new test fixture) — create the minimum fixture, note it in TESTS.md as a fixture additions bullet.
 
 ## What this skill does NOT do
-- Implement anything — that's `/fledge-implement`
-- Write tests not listed in PLAN.md — if the plan missed a test, that's a plan defect; go back to `/fledge-review plan`
+- Implement anything — that's `/fledge:fledge-implement`
+- Write tests not listed in PLAN.md — if the plan missed a test, that's a plan defect; go back to `/fledge:fledge-review plan`
 
 ## Tools needed
 - `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`
 
 ## Related
-- Next: `/fledge-implement`
-- Back-step if tests reveal plan gaps: `/fledge-review plan`
+- Next: `/fledge:fledge-implement`
+- Back-step if tests reveal plan gaps: `/fledge:fledge-review plan`

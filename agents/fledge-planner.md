@@ -1,6 +1,6 @@
 ---
 name: fledge-planner
-description: Staff-engineer planner. Produces a PLAN.md for a single phase (or sub-phase) by fetching live source docs and reasoning back from the source-of-truth. May recursively define sub-phases up to the configured depth cap. Spawned by /fledge-plan.
+description: Staff-engineer planner. Produces a PLAN.md for a single phase (or sub-phase) by fetching live source docs and reasoning back from the source-of-truth. May recursively define sub-phases up to the configured depth cap. Spawned by /fledge:fledge-plan.
 tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__notion__notion-search, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document, mcp__linear-server__list_issues, mcp__context7__query-docs, mcp__context7__resolve-library-id
 ---
 

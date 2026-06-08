@@ -18,14 +18,14 @@ All other stages run autonomously (subject to context-budget escalations).
 - Starting fresh from a single source doc (will prompt to ingest)
 
 ## When NOT to run
-- User only wants one stage — they should invoke that stage directly (`/fledge-plan`, `/fledge-review code`, etc.)
+- User only wants one stage — they should invoke that stage directly (`/fledge:fledge-plan`, `/fledge:fledge-review code`, etc.)
 - Project has active unresolved escalations — resolve first, then resume
 
 ## Arguments
 
 - `--from=<stage>` — resume from a specific stage (e.g. `--from=implement` assumes plan + review passed)
 - `--phase=<id>` — operate on a specific phase (default: the top-level phase in `.fledge/phases/`)
-- `--deep` — allow sub-phase depth > 3 (propagates to `/fledge-plan`)
+- `--deep` — allow sub-phase depth > 3 (propagates to `/fledge:fledge-plan`)
 - `--dry-run` — print the plan of execution without running subagents
 
 ## Process
@@ -41,7 +41,7 @@ If estimated total work is large (>20 subagent spawns), warn:
 > Consider running individual stages manually to maintain context headroom.
 
 ### 1. Auth check
-Invoke `/fledge-auth`. If any connector fails, STOP with instructions.
+Invoke `/fledge:fledge-auth`. If any connector fails, STOP with instructions.
 
 ### 1.5. Worktree, branch & GPG pre-flight
 
@@ -54,20 +54,20 @@ Before any code-touching work:
   - Never disturb another worktree's/checkout's uncommitted files. If the only available checkout is occupied by unrelated uncommitted work, ASK before doing anything.
 - Verify `git config commit.gpgsign` is `true` AND `git config user.signingkey` resolves to a key in `gpg --list-secret-keys`. If signing is misconfigured, STOP and ask the user to fix it before proceeding.
 
-These also run inside `/fledge-implement`; the orchestrator passes `--skip-preflight` to avoid re-checking.
+These also run inside `/fledge:fledge-implement`; the orchestrator passes `--skip-preflight` to avoid re-checking.
 
 ### 2. Ingest (if needed)
 If `.fledge/SOURCES.md` doesn't exist:
 - Prompt user for source docs (or parse from the invocation message)
-- Invoke `/fledge-ingest`
+- Invoke `/fledge:fledge-ingest`
 
 If it exists, verify freshness (SoT last-updated vs current) and offer to refresh.
 
 ### 3. Plan
-Invoke `/fledge-plan` for the target phase (creates tree if sub-phases).
+Invoke `/fledge:fledge-plan` for the target phase (creates tree if sub-phases).
 
 ### 4. Review plan
-Invoke `/fledge-review plan --sub-phases` (the sub-skill returns a verdict; the orchestrator owns the checkpoint).
+Invoke `/fledge:fledge-review plan --sub-phases` (the sub-skill returns a verdict; the orchestrator owns the checkpoint).
 
 After all plans return PASS (or ESCALATE):
 
@@ -81,7 +81,7 @@ Apply `references/checkpoint-protocol.md`:
    - Count of sub-phases and estimated implementation scope
 2. `AskUserQuestion`:
    - `approve` — continue
-   - `iterate` — re-run `/fledge-review plan` with user feedback
+   - `iterate` — re-run `/fledge:fledge-review plan` with user feedback
    - `abort` — stop; write resume file
    - `details` — print the plan tree inline, then re-prompt
 
@@ -90,17 +90,17 @@ On abort: `.fledge/RESUME.md` is written with exact `--from=plan` recovery comma
 ### 6. Test → Implement → Review code (looped, per phase leaf-first)
 
 For each phase in leaves-first order:
-1. `/fledge-test <phase>` — write failing tests
-2. `/fledge-implement <phase>` — make them pass
-3. `/fledge-review code <phase>` — 3-round review (returns a verdict)
+1. `/fledge:fledge-test <phase>` — write failing tests
+2. `/fledge:fledge-implement <phase>` — make them pass
+3. `/fledge:fledge-review code <phase>` — 3-round review (returns a verdict)
 4. If review returns BLOCK, the review skill handles the re-implement loop internally. If it ESCALATEs, surface to user immediately (do not proceed to next phase).
 
 **Context budget check** between phases. At 50%, warn. At 70%, checkpoint the user.
 
 ### 7. QA
-Invoke `/fledge-qa` once, after all phases are implemented and reviewed. The QA engineer exercises the whole change set end-to-end. The skill returns a verdict; the orchestrator owns the checkpoint.
+Invoke `/fledge:fledge-qa` once, after all phases are implemented and reviewed. The QA engineer exercises the whole change set end-to-end. The skill returns a verdict; the orchestrator owns the checkpoint.
 
-If QA fails, the skill routes back to `/fledge-implement` → `/fledge-review code` → `/fledge-qa` internally, up to 3 QA rounds.
+If QA fails, the skill routes back to `/fledge:fledge-implement` → `/fledge:fledge-review code` → `/fledge:fledge-qa` internally, up to 3 QA rounds.
 
 ### 8. 🛑 Checkpoint 2 — "Ship it?"
 
@@ -128,7 +128,7 @@ The escalation checkpoint has 3 options:
 - `Read`, `Write`, `Bash`, `Glob`
 - `Agent` (many — it orchestrates every subagent-spawning sub-skill)
 - `AskUserQuestion` (checkpoints + escalations)
-- `Skill` (to invoke `/fledge-auth`, `/fledge-ingest`, `/fledge-plan`, etc.)
+- `Skill` (to invoke `/fledge:fledge-auth`, `/fledge:fledge-ingest`, `/fledge:fledge-plan`, etc.)
 
 ## Design principles
 
@@ -138,5 +138,5 @@ The escalation checkpoint has 3 options:
 - **Do NOT add stages.** If a user wants a new stage (e.g. "security review"), that's a new skill that composes into the pipeline — not a patch to this orchestrator.
 
 ## Related
-- Sub-skills: `/fledge-auth`, `/fledge-ingest` (with `--append`), `/fledge-plan`, `/fledge-review` (plan|code), `/fledge-test`, `/fledge-implement`, `/fledge-qa`
+- Sub-skills: `/fledge:fledge-auth`, `/fledge:fledge-ingest` (with `--append`), `/fledge:fledge-plan`, `/fledge:fledge-review` (plan|code), `/fledge:fledge-test`, `/fledge:fledge-implement`, `/fledge:fledge-qa`
 - References: `checkpoint-protocol.md`, `context-budget.md`, `severity-rubric.md`, `source-manifest-format.md`, `sot-snapshot.md`, `subphase-depth.md`, `templates/`

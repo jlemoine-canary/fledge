@@ -9,7 +9,7 @@ version: 0.1.0
 Verify MCP and CLI authentications required by the rest of the fledge pipeline. Fail fast with actionable setup instructions if anything is missing.
 
 ## When to run
-- First step of any `/fledge` project (automatically invoked)
+- First step of any `/fledge:fledge` project (automatically invoked)
 - Any time a fledge skill errors on an MCP call
 - On demand, when the user asks
 
@@ -55,7 +55,7 @@ Report to the user:
 | Figma MCP | ✓ | — |
 | Playwright MCP | ✗ | claude mcp add playwright, then restart |
 
-Next: <either "all good, proceed to /fledge-ingest" or "fix the above first">
+Next: <either "all good, proceed to /fledge:fledge-ingest" or "fix the above first">
 ```
 
 If any connector fails, **STOP the pipeline**. Do not continue to ingest / plan / etc.

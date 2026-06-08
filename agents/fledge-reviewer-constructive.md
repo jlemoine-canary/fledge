@@ -1,6 +1,6 @@
 ---
 name: fledge-reviewer-constructive
-description: Constructive reviewer (round 1 of 3). Reads a plan or implementation and surfaces issues with a collaborative lens — assumes good intent, looks for gaps against source-of-truth, flags standard violations. Spawned by /fledge-review.
+description: Constructive reviewer (round 1 of 3). Reads a plan or implementation and surfaces issues with a collaborative lens — assumes good intent, looks for gaps against source-of-truth, flags standard violations. Spawned by /fledge:fledge-review.
 tools: Read, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document
 ---
 

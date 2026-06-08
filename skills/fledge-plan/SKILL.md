@@ -1,6 +1,6 @@
 ---
 name: fledge-plan
-description: Create a staff-engineer-level PLAN.md for a phase by spawning the fledge-planner subagent. Recursively plans sub-phases up to depth 3 (--deep for depth 4+). Use when the user says "plan this phase", "plan <phase-id>", "break this down", or after /fledge-ingest completes.
+description: Create a staff-engineer-level PLAN.md for a phase by spawning the fledge-planner subagent. Recursively plans sub-phases up to depth 3 (--deep for depth 4+). Use when the user says "plan this phase", "plan <phase-id>", "break this down", or after /fledge:fledge-ingest completes.
 version: 0.1.0
 ---
 
@@ -68,12 +68,12 @@ Output:
   .fledge/phases/01-auth-refactor/sub-phases/01.1-token-storage/PLAN.md
   .fledge/phases/01-auth-refactor/sub-phases/01.2-session-migration/PLAN.md
 
-Next: /fledge-review plan 01-auth-refactor
+Next: /fledge:fledge-review plan 01-auth-refactor
 ```
 
 ## What this skill does NOT do
 - Write the plan itself — that's the subagent's job
-- Review the plan — `/fledge-review plan` handles that
+- Review the plan — `/fledge:fledge-review plan` handles that
 - Read source content inline — pass references only
 
 ## Tools needed
@@ -84,4 +84,4 @@ Next: /fledge-review plan 01-auth-refactor
 ## Related
 - Subagent: `fledge-planner`
 - References: `severity-rubric.md`, `source-manifest-format.md`, `subphase-depth.md`, `context-budget.md`
-- Next: `/fledge-review plan`
+- Next: `/fledge:fledge-review plan`

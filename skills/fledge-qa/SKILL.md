@@ -1,19 +1,19 @@
 ---
 name: fledge-qa
-description: End-to-end QA with Playwright MCP. Derives scenarios from the source-of-truth, runs them in a real browser, and iterates with the implementer on failures. Up to 3 rounds. Use when the user says "QA this phase", "run Playwright", or after /fledge-review code passes.
+description: End-to-end QA with Playwright MCP. Derives scenarios from the source-of-truth, runs them in a real browser, and iterates with the implementer on failures. Up to 3 rounds. Use when the user says "QA this phase", "run Playwright", or after /fledge:fledge-review code passes.
 version: 0.1.0
 ---
 
 # fledge-qa
 
-Final stage. Browser-level QA via the Playwright MCP. Spawns `fledge-qa-engineer`. Iterates with `/fledge-implement` on any failures.
+Final stage. Browser-level QA via the Playwright MCP. Spawns `fledge-qa-engineer`. Iterates with `/fledge:fledge-implement` on any failures.
 
-This skill returns a verdict — it does NOT checkpoint. The orchestrator (`/fledge`) decides when to checkpoint.
+This skill returns a verdict — it does NOT checkpoint. The orchestrator (`/fledge:fledge`) decides when to checkpoint.
 
 ## Preconditions
 
 - `REVIEW-CODE-final.md` verdict = PASS
-- `/fledge-auth` confirmed Playwright MCP is available
+- `/fledge:fledge-auth` confirmed Playwright MCP is available
 - Project has a working local dev environment (as described in `CLAUDE.md`)
 
 ## Arguments
@@ -49,8 +49,8 @@ The engineer writes `QA.md` (scenarios + statuses, matching the template) and op
 ### 3. Handle failures
 
 If `QA-FINDINGS.md` has consequential findings:
-1. Route back to `/fledge-implement` with the findings as required fixes
-2. On re-implementation, re-spawn `/fledge-review code` (the review cycle must re-approve the fix)
+1. Route back to `/fledge:fledge-implement` with the findings as required fixes
+2. On re-implementation, re-spawn `/fledge:fledge-review code` (the review cycle must re-approve the fix)
 3. Then re-spawn `fledge-qa-engineer`
 
 Max 3 QA rounds. On round 3 still failing, return `ESCALATE` to the orchestrator.
@@ -80,16 +80,16 @@ Browser snapshots and screenshots can be token-heavy. The engineer should:
 - Summarize passing scenarios in a single table, not per-scenario narrative
 
 ## What this skill does NOT do
-- Run unit tests (those ran in `/fledge-test` / `/fledge-implement`)
+- Run unit tests (those ran in `/fledge:fledge-test` / `/fledge:fledge-implement`)
 - Test production or staging — **local only**
-- Fix the code — it routes failures back to `/fledge-implement`
+- Fix the code — it routes failures back to `/fledge:fledge-implement`
 - Checkpoint the user — the orchestrator does that based on the verdict
 
 ## Tools needed
 - `Read`, `Write`, `Bash` (for dev server probes, SoT snapshot)
-- `Agent` (spawn `fledge-qa-engineer`, and re-spawn `/fledge-implement` via orchestrator on failure)
+- `Agent` (spawn `fledge-qa-engineer`, and re-spawn `/fledge:fledge-implement` via orchestrator on failure)
 
 ## Related
 - Subagent: `fledge-qa-engineer`
 - References: `severity-rubric.md`, `sot-snapshot.md`, `templates/qa.md`, `templates/review.md`
-- Back-step on failure: `/fledge-implement` then `/fledge-review code`
+- Back-step on failure: `/fledge:fledge-implement` then `/fledge:fledge-review code`

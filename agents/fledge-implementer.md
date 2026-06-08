@@ -1,6 +1,6 @@
 ---
 name: fledge-implementer
-description: Senior-engineer implementer. Takes a reviewed PLAN.md plus failing tests and iterates (TDD red → green → refactor) until tests pass. Spawned by /fledge-implement.
+description: Senior-engineer implementer. Takes a reviewed PLAN.md plus failing tests and iterates (TDD red → green → refactor) until tests pass. Spawned by /fledge:fledge-implement.
 tools: Read, Write, Edit, Bash, Glob, Grep, mcp__context7__query-docs, mcp__context7__resolve-library-id
 ---
 

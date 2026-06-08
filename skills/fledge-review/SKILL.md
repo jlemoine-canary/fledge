@@ -1,12 +1,12 @@
 ---
 name: fledge-review
-description: Three-round review (constructive → adversarial → integrator) on a plan or implementation. Pass mode "plan" to review a PLAN.md, or "code" to review an implementation. Iterates up to 3 cycles until verdict is PASS. Use when the user says "review the plan/code for <phase>" or after /fledge-plan / /fledge-implement completes.
+description: Three-round review (constructive → adversarial → integrator) on a plan or implementation. Pass mode "plan" to review a PLAN.md, or "code" to review an implementation. Iterates up to 3 cycles until verdict is PASS. Use when the user says "review the plan/code for <phase>" or after /fledge:fledge-plan / /fledge:fledge-implement completes.
 version: 0.1.0
 ---
 
 # fledge-review
 
-Three-persona review for either a plan or an implementation. Replaces the earlier `/fledge-review-plan` and `/fledge-review-code` skills.
+Three-persona review for either a plan or an implementation. Replaces the earlier `/fledge:fledge-review-plan` and `/fledge:fledge-review-code` skills.
 
 ## Arguments
 
@@ -20,7 +20,7 @@ Three-persona review for either a plan or an implementation. Replaces the earlie
 - `code` mode: phase dir has `IMPLEMENTATION.md` and tests are passing
 - `.fledge/SOURCES.md` exists with exactly one source-of-truth
 
-This skill returns a verdict — it does NOT checkpoint. The orchestrator (`/fledge`) decides when to checkpoint based on the verdict.
+This skill returns a verdict — it does NOT checkpoint. The orchestrator (`/fledge:fledge`) decides when to checkpoint based on the verdict.
 
 ## Process
 
@@ -94,5 +94,5 @@ Warn upfront if the tree implies >24 reviewer spawns (8+ artifacts × 3 personas
 ## Related
 - Subagents: `fledge-reviewer-constructive`, `fledge-reviewer-adversarial`, `fledge-reviewer-integrator`, `fledge-planner`, `fledge-implementer`
 - References: `severity-rubric.md`, `sot-snapshot.md`, `templates/review.md`, `context-budget.md`
-- Next on PASS (plan mode): `/fledge-test`
-- Next on PASS (code mode): `/fledge-qa`
+- Next on PASS (plan mode): `/fledge:fledge-test`
+- Next on PASS (code mode): `/fledge:fledge-qa`

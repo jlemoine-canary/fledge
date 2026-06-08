@@ -1,6 +1,6 @@
 ---
 name: fledge-reviewer-adversarial
-description: Adversarial reviewer (round 2 of 3). Actively tries to break the plan or code — hunts for race conditions, auth bypass, data corruption paths, source-of-truth contradictions, and scope creep. Spawned by /fledge-review after the constructive round.
+description: Adversarial reviewer (round 2 of 3). Actively tries to break the plan or code — hunts for race conditions, auth bypass, data corruption paths, source-of-truth contradictions, and scope creep. Spawned by /fledge:fledge-review after the constructive round.
 tools: Read, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document
 ---
 

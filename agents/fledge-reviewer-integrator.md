@@ -1,6 +1,6 @@
 ---
 name: fledge-reviewer-integrator
-description: Integrator reviewer (round 3 of 3). Reconciles constructive and adversarial findings, deduplicates, resolves conflicts, and issues the final block/pass verdict using the severity rubric. Spawned by /fledge-review after the constructive and adversarial rounds.
+description: Integrator reviewer (round 3 of 3). Reconciles constructive and adversarial findings, deduplicates, resolves conflicts, and issues the final block/pass verdict using the severity rubric. Spawned by /fledge:fledge-review after the constructive and adversarial rounds.
 tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document
 ---
 

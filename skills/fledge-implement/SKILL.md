@@ -1,6 +1,6 @@
 ---
 name: fledge-implement
-description: Hand off the reviewed plan and failing tests to the fledge-implementer subagent, who iterates TDD-style until tests pass and CLAUDE.md standards are met. Use when the user says "implement <phase>", "make the tests pass", or after /fledge-test completes.
+description: Hand off the reviewed plan and failing tests to the fledge-implementer subagent, who iterates TDD-style until tests pass and CLAUDE.md standards are met. Use when the user says "implement <phase>", "make the tests pass", or after /fledge:fledge-test completes.
 version: 0.1.0
 ---
 
@@ -41,7 +41,7 @@ Before any code change:
    - `git config user.signingkey` must be set. If unset or set to a key not in `gpg --list-secret-keys`, escalate.
    - If signing is misconfigured, write `BLOCKED-gpg.md` and STOP. Do not commit unsigned. Do not skip with `--no-gpg-sign`.
 
-These checks run once at the top of `/fledge-implement`. If the orchestrator already ran them, pass `--skip-preflight` to avoid re-checking.
+These checks run once at the top of `/fledge:fledge-implement`. If the orchestrator already ran them, pass `--skip-preflight` to avoid re-checking.
 
 ### 1. Determine implementation order
 
@@ -76,8 +76,8 @@ The implementer writes `IMPLEMENTATION.md` with:
 **Handle escalations:**
 
 - **BLOCKED** — write a summary, checkpoint to user: "Implementer got stuck on test X after 5 tries. Options: (a) review the test, (b) revise plan, (c) accept as known limitation."
-- **DEVIATION** — the plan was wrong. Route back to `/fledge-review plan` with the deviation doc as input.
-- **TEST-DEFECT** — route back to `/fledge-test` to fix the test, then re-spawn implementer.
+- **DEVIATION** — the plan was wrong. Route back to `/fledge:fledge-review plan` with the deviation doc as input.
+- **TEST-DEFECT** — route back to `/fledge:fledge-test` to fix the test, then re-spawn implementer.
 
 ### 3. Post-implementation sanity
 
@@ -117,7 +117,7 @@ If the user opted out of mid-fledge commits, leave the changes uncommitted and n
   Tests passing: <N>
   Non-blocking plan nits deferred: <N> (listed in IMPLEMENTATION.md)
 
-Next: /fledge-review code <id>
+Next: /fledge:fledge-review code <id>
 ```
 
 ## Context-budget management
@@ -127,9 +127,9 @@ Implementation can touch many files — keep the orchestrator context low by pas
 If a phase has >10 files in its plan, consider splitting across two implementer spawns — by file group. The orchestrator does this split if the plan allows clean separation.
 
 ## What this skill does NOT do
-- Write tests (that's `/fledge-test`)
-- Review the implementation (that's `/fledge-review code`)
-- Run Playwright (that's `/fledge-qa`)
+- Write tests (that's `/fledge:fledge-test`)
+- Review the implementation (that's `/fledge:fledge-review code`)
+- Run Playwright (that's `/fledge:fledge-qa`)
 
 ## Tools needed
 - `Read`, `Write`, `Bash`, `Glob`
@@ -138,5 +138,5 @@ If a phase has >10 files in its plan, consider splitting across two implementer 
 
 ## Related
 - Subagent: `fledge-implementer`
-- Next: `/fledge-review code`
-- Back-steps: `/fledge-test` (test defect), `/fledge-review plan` (plan deviation)
+- Next: `/fledge:fledge-review code`
+- Back-steps: `/fledge:fledge-test` (test defect), `/fledge:fledge-review plan` (plan deviation)

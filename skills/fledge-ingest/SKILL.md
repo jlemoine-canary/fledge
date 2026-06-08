@@ -15,7 +15,7 @@ Accept a list of source documents from the user, verify each is fetchable, and w
 
 ## Preconditions
 
-- `/fledge-auth` has passed (or equivalent check done)
+- `/fledge:fledge-auth` has passed (or equivalent check done)
 - The user has supplied at least one source reference
 
 ## Process
@@ -40,7 +40,7 @@ Unclear inputs → ask the user for clarification (but batch all clarifications 
 Run the matching fetch tool for each entry (see `../../references/source-manifest-format.md`). Confirm it returns real content. Do NOT cache the content — we re-fetch on every plan/review.
 
 If a fetch fails:
-- Auth error → refer user to `/fledge-auth`
+- Auth error → refer user to `/fledge:fledge-auth`
 - Not found / permission denied → ask user to double-check the reference
 - Rate limit → back off and retry once
 
@@ -55,7 +55,7 @@ If a fetch fails:
 > - cancel — don't add it
 
 If SoT changes mid-project, warn:
-> ⚠ Source-of-truth changed after planning began. Existing plans may need re-review against the new SoT. Run `/fledge-review plan` on any active plan.
+> ⚠ Source-of-truth changed after planning began. Existing plans may need re-review against the new SoT. Run `/fledge:fledge-review plan` on any active plan.
 
 ### 4. Write `.fledge/SOURCES.md`
 
@@ -69,7 +69,7 @@ Use the format in `../../references/source-manifest-format.md`. Include a short 
 ```
 ✓ <Ingested | Appended> N sources. Source-of-truth: <title> (<ref>) [<unchanged | promoted>].
 .fledge/SOURCES.md updated.
-Next: /fledge-plan to start planning, or /fledge-ingest --append to add more.
+Next: /fledge:fledge-plan to start planning, or /fledge:fledge-ingest --append to add more.
 ```
 
 ## Scope-management
@@ -89,5 +89,5 @@ Source doc sizes can vary wildly. A single Notion page can be 40k tokens; a Figm
 - `AskUserQuestion`
 
 ## Related
-- `/fledge-plan` — next stage
-- `/fledge-review plan` — re-run if SoT changed and plans exist
+- `/fledge:fledge-plan` — next stage
+- `/fledge:fledge-review plan` — re-run if SoT changed and plans exist
