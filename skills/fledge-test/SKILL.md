@@ -35,6 +35,7 @@ Extract every test case from `PLAN.md`'s `## Test plan (TDD)`, grouped by file.
 | Anti-pattern | Do this instead |
 |---|---|
 | `mock.patch('myapp.x.y')` without `autospec=True` | `mock.patch('myapp.x.y', autospec=True)` |
+| Importing or calling private functions/methods in a test (`_helper()`, `obj._method()`, name-mangled attributes) | Exercise the behavior through the public API. If a private helper seems to need direct testing, that's a design smell — either the behavior is reachable through a public entry point (test it there) or the helper deserves promotion to a public utility (flag it as a plan/design question, don't reach past the underscore) |
 | Mocking internal application code | Use a real fixture or factory; reserve mocks for external IO (HTTP, third-party SDKs) |
 | `datetime.now()`, `time.time()`, `time.sleep()` in tests | Freeze time with `freezegun` / `pytest.freezer` / project's helper |
 | `random.choice(...)`, `uuid.uuid4()` in tests | `faker.uuid4()` and seeded fakers — deterministic |

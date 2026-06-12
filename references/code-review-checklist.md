@@ -44,6 +44,7 @@ Run the full security section of the project `CLAUDE.md`, line by line, against 
 ## Code-mode hunting items
 
 ### C1. Test quality
+- Tests that import or call private functions/methods directly (`_helper()`, `obj._method()`, name-mangled attributes) instead of exercising the public API. Tests coupled to internals break on refactors that don't change behavior and pass when the public contract is broken. If the private helper genuinely needs its own tests, the fix is a design change (promote it to a public utility), not a test that reaches past the underscore.
 - Patches without `autospec=True`
 - Mocking internal application code where a real fixture would work
 - `datetime.now()` / `time.time()` / `time.sleep()` instead of frozen clock
