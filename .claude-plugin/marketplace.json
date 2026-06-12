@@ -13,7 +13,7 @@
       "name": "fledge",
       "source": "./",
       "description": "Full project lifecycle — ingest multi-source docs, plan (with sub-phases), build TDD-first, review with adversarial personas, and QA with Playwright. Each stage is its own composable skill.",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ]
 }
