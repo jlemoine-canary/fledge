@@ -1,7 +1,6 @@
 ---
 name: fledge-review
 description: Three-round review (constructive → adversarial → integrator) on a plan or implementation. Pass mode "plan" to review a PLAN.md, or "code" to review an implementation. Iterates up to 3 cycles until verdict is PASS. Use when the user says "review the plan/code for <phase>" or after /fledge:fledge-plan / /fledge:fledge-implement completes.
-version: 0.1.0
 ---
 
 # fledge-review

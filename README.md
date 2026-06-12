@@ -69,3 +69,18 @@ Fledge writes state into `.fledge/` at the project root:
 └── checkpoints/
     └── <timestamp>-<stage>.md
 ```
+
+## Releasing changes
+
+The installed plugin is a **version-gated cache** (at `~/.claude/plugins/cache/fledge/...`) — `claude plugin update` only picks up changes when the declared version increases. So every content change merged to `main` must:
+
+1. Bump the version in **both** `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` (they must stay in sync).
+2. Add an entry to `CHANGELOG.md`.
+
+Otherwise installed copies silently stay stale. After merging, pull the source checkout and run:
+
+```
+claude plugin update fledge@fledge
+```
+
+Individual `SKILL.md` files intentionally carry no `version:` frontmatter — the plugin version is the single source of truth for releases.

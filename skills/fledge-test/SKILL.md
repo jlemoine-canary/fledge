@@ -1,7 +1,6 @@
 ---
 name: fledge-test
 description: Write the failing tests listed in a phase's PLAN.md — TDD red stage. Tests must fail for the right reason (missing implementation, not missing imports). Use when the user says "write the tests for <phase>", "start TDD", or after /fledge:fledge-review plan passes.
-version: 0.1.0
 ---
 
 # fledge-test

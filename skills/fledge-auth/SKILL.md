@@ -1,7 +1,6 @@
 ---
 name: fledge-auth
 description: Verify that all MCP connections fledge depends on are authenticated — Notion, Linear, GitHub (via gh), Figma, Playwright. Use when starting a new fledge project, after auth errors, or whenever the user asks to "check auth" or "check connections" for fledge.
-version: 0.1.0
 ---
 
 # fledge-auth

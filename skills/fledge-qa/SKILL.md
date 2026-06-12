@@ -1,7 +1,6 @@
 ---
 name: fledge-qa
 description: End-to-end QA with Playwright MCP. Derives scenarios from the source-of-truth, runs them in a real browser, and iterates with the implementer on failures. Up to 3 rounds. Use when the user says "QA this phase", "run Playwright", or after /fledge:fledge-review code passes.
-version: 0.1.0
 ---
 
 # fledge-qa
