@@ -51,4 +51,4 @@ If any stage fails autonomously (e.g. plan review loop can't converge in 3 round
 - Plan review: **max 3 rounds** (constructive → adversarial → integrator). If round 3 still has consequential findings, escalate to user.
 - Code review: **max 3 rounds** (same persona sequence). Same escalation rule.
 - Implementation TDD loop: **max 5 iterations** per failing test. If a test won't pass in 5 tries, escalate.
-- QA Playwright loop: **max 3 rounds** of test-fail → fix → test-pass. Escalate if it still fails.
+- QA loop (browser and/or API, per phase surface): **max 3 rounds** of test-fail → fix → test-pass. Escalate if it still fails.

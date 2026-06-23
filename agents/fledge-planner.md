@@ -39,6 +39,8 @@ Produce `PLAN.md` for the phase you were spawned to plan. The plan must be direc
 
 Write the file matching `../references/templates/plan.md`. The template defines every section and the column structure for the `Reuse vs novelty`, `File plan`, and `Risks` tables. Read the template before writing — every section is required (or "None." if not applicable).
 
+**Classify the phase's surface** in the `## Surface` field (`frontend` | `backend` | `full-stack` | `library-internal`) — see `../references/qa-by-surface.md`. This must agree with your File plan: don't mark a phase `frontend` if it only touches `backend/` modules. The surface drives how the phase is tested and QA'd downstream (browser vs API/side-effect vs skip-with-rationale), so getting it right matters. If the SoT's requirements are user-facing but your file plan is backend-only (or vice versa), that's a scoping signal — reconcile it or raise it in Open questions.
+
 If `CLAUDE.md` flags any system this phase touches as high-risk (e.g. "message scheduling = risk level 5"), prepend the Risks section with `Risk level: <N> — extra caution required`.
 
 ## What makes this a staff-engineer plan (not a senior one)

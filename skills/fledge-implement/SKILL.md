@@ -128,7 +128,7 @@ If a phase has >10 files in its plan, consider splitting across two implementer 
 ## What this skill does NOT do
 - Write tests (that's `/fledge:fledge-test`)
 - Review the implementation (that's `/fledge:fledge-review code`)
-- Run Playwright (that's `/fledge:fledge-qa`)
+- Run QA — browser or API (that's `/fledge:fledge-qa`)
 
 ## Tools needed
 - `Read`, `Write`, `Bash`, `Glob`

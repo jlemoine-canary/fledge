@@ -1,5 +1,12 @@
 # Phase <id>: <title>
 
+## Surface
+<One of: `frontend` | `backend` | `full-stack` | `library-internal`. This drives the
+test and QA approach downstream — see `references/qa-by-surface.md`. Justify in one line
+from the File plan: e.g. "backend — only `backend/myapp/...` modules and an API contract,
+no UI." Use `library-internal` for pure library/CLI/migration/internal-logic phases with
+no UI and no externally-reachable service surface.>
+
 ## Source contract
 - **Source-of-truth:** <SoT entry from manifest>
 - **Requirements** (cite source line/section):

@@ -1,7 +1,7 @@
 {
   "name": "fledge",
-  "version": "0.1.1",
-  "description": "Full project lifecycle — ingest multi-source docs, plan (with sub-phases), build TDD-first, review with adversarial personas, and QA with Playwright. Each stage is its own composable skill.",
+  "version": "0.2.0",
+  "description": "Full project lifecycle — ingest multi-source docs, plan (with sub-phases), build TDD-first, review with adversarial personas, and run surface-aware QA (browser for UI, API + side-effects for backend). Each stage is its own composable skill.",
   "author": {
     "name": "Jason LeMoine",
     "email": "jlemoine@canarytechnologies.com"
