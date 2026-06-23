@@ -35,9 +35,14 @@ Probe: `gh auth status` via Bash.
 Probe: Figma MCP server is in the plugin system under `plugin:figma`. Check tool availability only — do not fetch a real design.
 - If the `mcp__figma__*` tools aren't loadable via ToolSearch, instruct: install the `figma` plugin (`/plugin` → claude-plugins-official → figma).
 
-### 5. Playwright
+### 5. Playwright (only needed for frontend / full-stack QA)
+Playwright drives **browser QA** and is required only when a phase's surface is `frontend` or
+`full-stack` (see `references/qa-by-surface.md`). Backend-only and library-internal phases QA
+without it. So treat this as a **conditional, non-blocking** check.
+
 Probe: `mcp__playwright__browser_close` (a no-op when no browser open) is safe to call; or simply verify the tool schemas load.
-- If not available, instruct user to install Playwright MCP (`claude mcp add playwright`) and restart.
+- If available → ✓.
+- If not available → report `not installed` with the fix (install Playwright MCP: `claude mcp add playwright`, then restart), but **do not block the pipeline on it**. Frontend/full-stack QA will need it; backend/library QA will not. Note it as a deferred requirement rather than a hard failure.
 
 ## Output
 
@@ -52,12 +57,16 @@ Report to the user:
 | Linear | ✗ | Run /mcp and authenticate linear-server |
 | GitHub (gh) | ✓ | — |
 | Figma MCP | ✓ | — |
-| Playwright MCP | ✗ | claude mcp add playwright, then restart |
+| Playwright MCP | ⚠ not installed | Needed only for frontend/full-stack QA: `claude mcp add playwright`, then restart |
 
 Next: <either "all good, proceed to /fledge:fledge-ingest" or "fix the above first">
 ```
 
-If any connector fails, **STOP the pipeline**. Do not continue to ingest / plan / etc.
+If a **required** connector fails (Notion, Linear, GitHub, Figma — the ones the source docs and review stages depend on), **STOP the pipeline**. Do not continue to ingest / plan / etc.
+
+Playwright is the exception: it's **only** required for `frontend`/`full-stack` QA. If it's the
+only thing missing, do **not** block — report it as a deferred requirement (⚠) and let the
+pipeline proceed. `/fledge:fledge-qa` re-checks it when it actually classifies a UI phase.
 
 ## Tools needed
 - Bash (for `gh auth status`)

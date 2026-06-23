@@ -40,7 +40,9 @@ If estimated total work is large (>20 subagent spawns), warn:
 > Consider running individual stages manually to maintain context headroom.
 
 ### 1. Auth check
-Invoke `/fledge:fledge-auth`. If any connector fails, STOP with instructions.
+Invoke `/fledge:fledge-auth`. If a **required** connector fails, STOP with instructions. A
+missing Playwright MCP is **not** a hard stop — it's only needed for `frontend`/`full-stack`
+QA, so the pipeline proceeds and `/fledge:fledge-qa` re-checks it if/when it hits a UI phase.
 
 ### 1.5. Worktree, branch & GPG pre-flight
 
@@ -97,7 +99,12 @@ For each phase in leaves-first order:
 **Context budget check** between phases. At 50%, warn. At 70%, checkpoint the user.
 
 ### 7. QA
-Invoke `/fledge:fledge-qa` once, after all phases are implemented and reviewed. The QA engineer exercises the whole change set end-to-end. The skill returns a verdict; the orchestrator owns the checkpoint.
+Invoke `/fledge:fledge-qa` once, after all phases are implemented and reviewed. QA is
+**surface-aware**: the skill classifies each phase (frontend/backend/full-stack/library-internal,
+per `references/qa-by-surface.md`) and routes to the matching QA — browser flows for UI, API +
+side-effect checks against the local service for backend, or a justified skip for pure
+library/CLI work. It exercises the whole change set end-to-end at the appropriate layer. The
+skill returns a verdict; the orchestrator owns the checkpoint.
 
 If QA fails, the skill routes back to `/fledge:fledge-implement` → `/fledge:fledge-review code` → `/fledge:fledge-qa` internally, up to 3 QA rounds.
 

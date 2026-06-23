@@ -24,7 +24,7 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 | `/fledge-review` | Three-round review on a plan or implementation. Pass mode `plan` or `code`. |
 | `/fledge-test` | Write failing tests (TDD red) |
 | `/fledge-implement` | Senior-engineer TDD iteration until tests pass |
-| `/fledge-qa` | Playwright iteration until implementation matches requirements |
+| `/fledge-qa` | Surface-aware QA — browser flows for UI, API + side-effect checks for backend, justified skip for pure library/CLI. Iterates until the implementation matches requirements. |
 
 ## Subagent personas
 
@@ -33,7 +33,8 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 - `fledge-reviewer-constructive` — finds issues with a collaborative lens
 - `fledge-reviewer-adversarial` — actively tries to break the plan/code
 - `fledge-reviewer-integrator` — reconciles prior two reviews, produces final verdict
-- `fledge-qa-engineer` — Playwright-first QA
+- `fledge-qa-engineer` — frontend/browser QA (Playwright)
+- `fledge-qa-engineer-backend` — backend QA: API + side-effect checks against the local service (no browser)
 
 ## Shared references
 
@@ -43,6 +44,7 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 - `references/sot-snapshot.md` — one fetch per review cycle, all personas read the snapshot
 - `references/checkpoint-protocol.md` — orchestrator-owned checkpoint mechanics
 - `references/subphase-depth.md` — depth cap and escape hatch
+- `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
 - `references/templates/` — output templates for plan, review, implementation, qa, tests
 
 ## State

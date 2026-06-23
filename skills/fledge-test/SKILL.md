@@ -17,6 +17,14 @@ TDD red stage. Write the failing tests called out in `PLAN.md`. Do not implement
 ### 1. Read the plan's test section
 Extract every test case from `PLAN.md`'s `## Test plan (TDD)`, grouped by file.
 
+**Match the tests to the phase's surface** (`PLAN.md`'s `## Surface` field — see
+`references/qa-by-surface.md`). A `backend` phase gets backend unit/integration tests
+(e.g. pytest with the project's API test client); a `frontend` phase gets component/unit
+tests (e.g. vitest); `full-stack` gets both. Don't write browser/e2e tests here — that's the
+QA stage's job, and only for surfaces that have a UI. If the plan's test list doesn't match
+its declared surface (e.g. a `backend` phase listing `.vue` component tests), treat it as a
+plan defect and go back to `/fledge:fledge-review plan`.
+
 ### 2. For each test file
 
 #### a. Check existing test infrastructure
