@@ -37,8 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Forbid tests that call private functions directly — new anti-pattern in
   `skills/fledge-test/SKILL.md` and item C1 in
-  `references/code-review-checklist.md`
-  ([#1](https://github.com/jlemoine-canary/fledge/pull/1)).
+  `references/code-review-checklist.md`.
 
 ### Removed
 
