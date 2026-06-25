@@ -13,7 +13,7 @@
       "name": "fledge",
       "source": "./",
       "description": "Full project lifecycle — ingest multi-source docs, plan (with sub-phases), build TDD-first, review with adversarial personas, and run surface-aware QA (browser for UI, API + side-effects for backend). Each stage is its own composable skill.",
-      "version": "0.2.1"
+      "version": "0.3.0"
     }
   ]
 }

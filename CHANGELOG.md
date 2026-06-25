@@ -5,6 +5,27 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-25
+
+### Added
+
+- **Self-maintenance loop for fledge's own skills** (closes #2). Fledge can now
+  author and validate its skills with evidence instead of vibes:
+  - `skills/fledge-writing-skills/SKILL.md` — meta-skill encoding the
+    RED→GREEN→REFACTOR authoring loop (no skill without a documented baseline
+    failure first), the fledge SKILL.md/agent/reference conventions, the
+    trigger-first ("Use when …") description rule, the release checklist, and a
+    "Rationalizations to reject" section.
+  - `skills/fledge-eval/SKILL.md` — lightweight, **Claude-Code-native** eval
+    harness: runs a fixture scenario through a without-skill subagent and a
+    with-skill subagent and reports the behavioral delta. No shell/Python, no new
+    runtime dependency.
+  - `references/skill-eval-protocol.md` — single source of truth for the eval
+    mechanics (the controlled A/B, fixture anatomy, how to read the outcome).
+  - `evals/` — in-repo behavioral fixtures: a README, scenario/result templates
+    under `evals/_template/`, and two seed fixtures (`fledge-test/private-function-test`,
+    `fledge-writing-skills/no-baseline-failure`).
+
 ## [0.2.1] - 2026-06-25
 
 ### Changed

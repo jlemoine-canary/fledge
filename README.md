@@ -26,6 +26,15 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 | `/fledge-implement` | Senior-engineer TDD iteration until tests pass |
 | `/fledge-qa` | Surface-aware QA — browser flows for UI, API + side-effect checks for backend, justified skip for pure library/CLI. Iterates until the implementation matches requirements. |
 
+## Meta-skills
+
+Fledge maintains its own skill library. These are not pipeline stages — they keep the skills evidence-based as the library grows.
+
+| Skill | Purpose |
+|---|---|
+| `/fledge-writing-skills` | Author/revise a skill, agent, or reference via a RED→GREEN→REFACTOR loop — no skill without a documented baseline failure first. Encodes the fledge conventions. |
+| `/fledge-eval` | Run a fixture scenario through a without-skill vs with-skill subagent and report the behavioral delta. Claude-Code-native — no scripts. |
+
 ## Subagent personas
 
 - `fledge-planner` — staff-engineer planner
@@ -45,7 +54,15 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 - `references/checkpoint-protocol.md` — orchestrator-owned checkpoint mechanics
 - `references/subphase-depth.md` — depth cap and escape hatch
 - `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
+- `references/skill-eval-protocol.md` — how `/fledge-eval` measures a skill's behavioral delta (Claude-Code-native A/B)
 - `references/templates/` — output templates for plan, review, implementation, qa, tests
+
+## Evals
+
+Fledge's own skills are validated by behavioral fixtures under `evals/`. Each fixture is a
+controlled A/B — a scenario run through a subagent without the skill vs with it — measured by
+`/fledge-eval`. See `evals/README.md` and `references/skill-eval-protocol.md`. No scripts; runs
+entirely through the `Agent` tool.
 
 ## State
 
