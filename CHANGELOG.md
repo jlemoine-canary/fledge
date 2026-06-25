@@ -5,6 +5,24 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-06-25
+
+### Changed
+
+- **Skill descriptions rewritten as triggers, not summaries.** All eight
+  `skills/*/SKILL.md` descriptions now lead with their "Use when …" triggering
+  conditions, with workflow detail trimmed to a short disambiguating clause.
+  Improves auto-triggering accuracy (the agent routes on the description before
+  it reads the body). Inspired by the convention in obra/superpowers.
+
+### Added
+
+- **Rationalization guards in the TDD discipline.** New "Rationalizations to
+  reject" sections in `skills/fledge-test/SKILL.md` and
+  `agents/fledge-implementer.md` enumerate and rebut the excuses an agent invents
+  to skip the red stage, keep untested code, weaken assertions, grind past the
+  iteration cap, or bypass GPG signing — hardening discipline under time pressure.
+
 ## [0.2.0] - 2026-06-22
 
 ### Added

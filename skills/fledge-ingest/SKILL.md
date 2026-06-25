@@ -1,6 +1,6 @@
 ---
 name: fledge-ingest
-description: Ingest source documents for a fledge project — accepts Notion pages, Linear issues/projects, GitHub issues/PRs, Figma designs, and local files/URLs. Builds or appends to .fledge/SOURCES.md and asks which source is the source-of-truth. Use when starting a new fledge project, adding a new source mid-project (--append), or when the user says "ingest sources", "add this doc", "start a project from these docs", etc.
+description: Use when starting a new fledge project, adding a source mid-project (--append), or when the user says "ingest sources", "add this doc", or "start a project from these docs". Accepts Notion pages, Linear issues/projects, GitHub issues/PRs, Figma designs, and local files/URLs; records which one is the source-of-truth in .fledge/SOURCES.md.
 ---
 
 # fledge-ingest

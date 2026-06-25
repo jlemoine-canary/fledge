@@ -1,6 +1,6 @@
 ---
 name: fledge-implement
-description: Hand off the reviewed plan and failing tests to the fledge-implementer subagent, who iterates TDD-style until tests pass and CLAUDE.md standards are met. Use when the user says "implement <phase>", "make the tests pass", or after /fledge:fledge-test completes.
+description: Use when the user says "implement <phase>", "make the tests pass", or after /fledge:fledge-test has written failing tests for a phase. Hands the reviewed plan and failing tests to the fledge-implementer subagent, who iterates TDD-style until tests pass and CLAUDE.md standards are met.
 ---
 
 # fledge-implement
