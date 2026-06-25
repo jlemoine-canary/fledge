@@ -34,6 +34,7 @@ Before any code change:
    - If the user explicitly wants to stack on another in-flight branch: base the worktree on that branch instead of the default, and say so.
    - If already on a suitable non-default branch in a dedicated worktree: stay put. Print `Continuing on branch <name>.`
    - Never disturb another worktree's/checkout's uncommitted files. If the only checkout is occupied by unrelated uncommitted work, ASK the user (don't stash silently).
+   - **Record the phase base commit.** Once on the phase branch, write the fork point to `.fledge/phases/<id>/.base-commit` (`git rev-parse HEAD` at branch creation, or `git merge-base HEAD origin/<default>` if continuing an existing branch). The review-package generator reads this for a reproducible diff base — see `references/review-package-format.md`.
 
 2. **GPG signing check.**
    - `git config commit.gpgsign` must be `true`. If not, escalate — do not flip it for them.
@@ -53,15 +54,13 @@ If `--here`, skip the tree walk.
 #### a. Check dependencies
 If the plan's `## Sub-phases` section lists `Depends on`, confirm those sub-phases are implemented before starting this one.
 
-#### b. Spawn `fledge-implementer`
+#### b. Generate the task brief, then spawn `fledge-implementer`
 
-Pass a self-contained prompt:
-- Phase directory
-- Path to `PLAN.md`, `REVIEW-PLAN-final.md`, `TESTS.md`
-- Source manifest path + SoT id
-- Project `CLAUDE.md` path
-- List of failing test files + test commands to run them
-- Max iterations per test: 5 (then escalate with BLOCKED-*.md)
+Assemble `<phase-dir>/TASK-BRIEF.md` per `references/task-brief-format.md` — a deterministic,
+minimal brief built from `PLAN.md`, `TESTS.md`, and `REVIEW-PLAN-final.md` (references, not
+pasted bodies; test command lifted verbatim; review residue carried as required-fixes /
+deferred-nits). Spawn `fledge-implementer` with the **path** to `TASK-BRIEF.md` — that file
+is the implementer's complete input.
 
 #### c. Handle the implementer's return
 
@@ -137,5 +136,6 @@ If a phase has >10 files in its plan, consider splitting across two implementer 
 
 ## Related
 - Subagent: `fledge-implementer`
+- References: `task-brief-format.md` (the brief recipe), `context-budget.md`
 - Next: `/fledge:fledge-review code`
 - Back-steps: `/fledge:fledge-test` (test defect), `/fledge:fledge-review plan` (plan deviation)

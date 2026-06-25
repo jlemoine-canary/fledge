@@ -54,6 +54,8 @@ Fledge maintains its own skill library. These are not pipeline stages — they k
 - `references/checkpoint-protocol.md` — orchestrator-owned checkpoint mechanics
 - `references/subphase-depth.md` — depth cap and escape hatch
 - `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
+- `references/review-package-format.md` — deterministic code-mode change-set bundle (`REVIEW-PACKAGE.md`) the reviewers consume
+- `references/task-brief-format.md` — deterministic minimal brief (`TASK-BRIEF.md`) the implementer consumes
 - `references/skill-eval-protocol.md` — how `/fledge-eval` measures a skill's behavioral delta (Claude-Code-native A/B)
 - `references/templates/` — output templates for plan, review, implementation, qa, tests
 
@@ -74,11 +76,14 @@ Fledge writes state into `.fledge/` at the project root:
 ├── phases/
 │   ├── 01-<slug>/
 │   │   ├── PLAN.md
+│   │   ├── TASK-BRIEF.md             # generated for the implementer (task-brief-format.md)
 │   │   ├── TESTS.md
 │   │   ├── IMPLEMENTATION.md
+│   │   ├── REVIEW-PACKAGE.md         # deterministic change set (+ .patch) for code review
 │   │   ├── REVIEW-PLAN-final.md
 │   │   ├── REVIEW-CODE-final.md
 │   │   ├── QA.md
+│   │   ├── .base-commit              # phase fork point, for a reproducible diff base
 │   │   ├── .sot-snapshot.md          # refreshed per review cycle
 │   │   ├── review-history.md
 │   │   ├── review-history/cycle-N/   # archived rounds
