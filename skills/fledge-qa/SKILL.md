@@ -1,6 +1,6 @@
 ---
 name: fledge-qa
-description: Surface-aware end-to-end QA. Classifies the phase as frontend/backend/full-stack/library-internal, then runs the matching QA — Playwright browser flows for UI, API + side-effect checks against the local service for backend, or a justified skip for pure library/CLI work. Derives scenarios from the source-of-truth and iterates with the implementer on failures. Up to 3 rounds. Use when the user says "QA this phase", "run QA", or after /fledge:fledge-review code passes.
+description: Use when the user says "QA this phase", "run QA", or after /fledge:fledge-review code passes. Surface-aware end-to-end QA that routes UI phases to Playwright browser flows, backend phases to API + side-effect checks against the local service, and pure library/CLI work to a justified skip; iterates with the implementer for up to 3 rounds.
 ---
 
 # fledge-qa

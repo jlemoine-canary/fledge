@@ -1,11 +1,31 @@
 ---
 name: fledge-test
-description: Write the failing tests listed in a phase's PLAN.md — TDD red stage. Tests must fail for the right reason (missing implementation, not missing imports). Use when the user says "write the tests for <phase>", "start TDD", or after /fledge:fledge-review plan passes.
+description: Use when the user says "write the tests for <phase>", "start TDD", or after /fledge:fledge-review plan passes. Writes the failing tests from a phase's PLAN.md — the TDD red stage; tests must fail for the right reason (missing implementation, not missing imports).
 ---
 
 # fledge-test
 
 TDD red stage. Write the failing tests called out in `PLAN.md`. Do not implement anything yet.
+
+## Rationalizations to reject
+
+Under time pressure you will be tempted to cut the red stage short. Each of these
+thoughts is a signal to stop, not proceed:
+
+- *"The implementation is trivial — I'll just write it and add a test after."* No. No
+  production code before a failing test. Trivial code is the cheapest to test; write the
+  test.
+- *"This test already passes, so the behavior must exist — I'll move on."* A test that
+  passes at the red stage is either tautological or the behavior leaked in elsewhere.
+  Investigate; do not accept a green test you never saw fail.
+- *"This assertion is brittle — I'll loosen it so the test isn't annoying later."*
+  Brittleness almost always means you're asserting an implementation detail. Fix *what*
+  you assert (observable behavior), not *how strictly* you assert it.
+- *"Building a real fixture is slow — I'll just mock the internal call."* No. Mocks are
+  for external IO only. A fixture you're avoiding is usually a design signal worth surfacing.
+- *"The plan didn't list this test, but it obviously needs one — I'll add it quietly."*
+  A missing test is a plan defect. Note it and route back to `/fledge:fledge-review plan`;
+  don't expand scope silently.
 
 ## Preconditions
 

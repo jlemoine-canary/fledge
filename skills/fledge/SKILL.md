@@ -1,6 +1,6 @@
 ---
 name: fledge
-description: Top-level orchestrator for the full project lifecycle. Runs auth-check → ingest → plan → review-plan → test → implement → review-code → qa with two user checkpoints (after final plan review, after QA). Use when the user says "fledge this project", "run the full pipeline", or provides a batch of source documents and wants everything done.
+description: Use when the user says "fledge this project", "run the full pipeline", or hands over a batch of source documents and wants everything taken from docs to shipped, QA'd code. Top-level orchestrator that chains every other fledge stage with two user checkpoints.
 ---
 
 # fledge (orchestrator)

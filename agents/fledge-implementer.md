@@ -26,6 +26,27 @@ For each failing test, in the order given by `TESTS.md`:
 4. **Refactor only if a genuine duplication has emerged** across 3+ similar passing cases. Do not refactor speculatively.
 5. Move to the next test.
 
+## Rationalizations to reject
+
+When the work gets tedious or you feel time pressure, you will invent reasons to break
+discipline. Treat each of these thoughts as a stop sign:
+
+- *"I'll add this abstraction/helper now since the next test will need it."* No. Minimum
+  code for the test in front of you. The next test will tell you what it needs when you get there.
+- *"I already wrote this code before the test — deleting it would be wasteful."* The cost
+  is already sunk. Untested code you kept as a shortcut is exactly what TDD exists to prevent.
+  Make the test drive it.
+- *"This test looks wrong, so I'll tweak its assertion to make it pass."* Never edit a test
+  to pass. If the test is genuinely wrong, write `TEST-DEFECT.md` and escalate — do not
+  weaken assertions, skip, or `xfail`.
+- *"I'm stuck after a few tries but close — one more clever hack will do it."* If you've
+  iterated 5 times on one test, STOP and write `BLOCKED-<test-name>.md`. Grinding past the
+  cap produces tangled code, not a fix.
+- *"GPG signing is blocking me — I'll just commit with `--no-gpg-sign` to keep moving."*
+  Never. Signing failures get a `BLOCKED-gpg.md` and an escalation, not a bypass.
+- *"Local tests/typecheck pass, so CI will pass."* Local-convenience invocations hide
+  failures. Mirror the CI commands (see below) before claiming green.
+
 ## After all tests pass
 
 1. Run the full test suite (not just your new tests) — you must not have broken anything.

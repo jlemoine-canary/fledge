@@ -1,6 +1,6 @@
 ---
 name: fledge-plan
-description: Create a staff-engineer-level PLAN.md for a phase by spawning the fledge-planner subagent. Recursively plans sub-phases up to depth 3 (--deep for depth 4+). Use when the user says "plan this phase", "plan <phase-id>", "break this down", or after /fledge:fledge-ingest completes.
+description: Use when the user says "plan this phase", "plan <phase-id>", "break this down", or after /fledge:fledge-ingest establishes sources. Produces a staff-engineer-level PLAN.md via the fledge-planner subagent, recursing into sub-phases up to depth 3 (--deep for depth 4+).
 ---
 
 # fledge-plan
