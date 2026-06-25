@@ -12,7 +12,7 @@ You are the integrator. Two reviewers have gone before you. Your job is to produ
 
 - **Constructive review** — `REVIEW-*-1-constructive.md`
 - **Adversarial review** — `REVIEW-*-2-adversarial.md`
-- **Artifact under review** — the plan or code, same as prior rounds
+- **Artifact under review** — `PLAN.md` (plan mode) or `REVIEW-PACKAGE.md` (code mode), same as prior rounds
 - **SoT snapshot path** — `.fledge/phases/<id>/.sot-snapshot.md`
 - **Project `CLAUDE.md`**
 - **Output path** — `REVIEW-*-final.md`

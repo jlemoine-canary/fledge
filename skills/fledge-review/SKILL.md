@@ -26,13 +26,13 @@ This skill returns a verdict — it does NOT checkpoint. The orchestrator (`/fle
 ### 1. Refresh SoT snapshot for this cycle
 Fetch the source-of-truth live using the fetcher matched to its type. Write to `.fledge/phases/<id>/.sot-snapshot.md` per `references/sot-snapshot.md` (timestamp, source ref, fetcher, cycle number). All three reviewers in this cycle read from the snapshot — no independent re-fetches.
 
-### 2. (code mode only) Compile the change set
-Run `git diff` against the phase's starting commit. Write the file list and stats to `<phase-dir>/CHANGES.md` for reviewers.
+### 2. (code mode only) Compile the review package
+Compile the deterministic change set per `references/review-package-format.md`: resolve base/head, run the fixed git recipe, and write `<phase-dir>/REVIEW-PACKAGE.md` (+ sibling `REVIEW-PACKAGE.patch`). This supersedes the old ad-hoc `CHANGES.md` — do not editorialize the package; reviewers form the opinions.
 
 ### 3. Round 1 — constructive
 Spawn `fledge-reviewer-constructive` with:
 - mode (`plan` or `code`)
-- artifact path: `PLAN.md` (plan mode) or `CHANGES.md` (code mode)
+- artifact path: `PLAN.md` (plan mode) or `REVIEW-PACKAGE.md` (code mode)
 - snapshot path
 - project `CLAUDE.md` path
 - output path: `<phase-dir>/REVIEW-<MODE>-1-constructive.md`
@@ -82,7 +82,7 @@ Warn upfront if the tree implies >24 reviewer spawns (8+ artifacts × 3 personas
 ## Context budget
 
 - One SoT fetch per cycle (snapshot), not per persona.
-- For >10-file code change sets: split the review by area (backend/frontend, or by requirement subset). Document the split in `CHANGES.md`.
+- For >10-file code change sets: split the review by area (backend/frontend, or by requirement subset). The `## Area split` line in `REVIEW-PACKAGE.md` records it (see `references/review-package-format.md`).
 - Reviewers receive paths, never artifact contents inline.
 
 ## Tools needed
@@ -92,6 +92,6 @@ Warn upfront if the tree implies >24 reviewer spawns (8+ artifacts × 3 personas
 
 ## Related
 - Subagents: `fledge-reviewer-constructive`, `fledge-reviewer-adversarial`, `fledge-reviewer-integrator`, `fledge-planner`, `fledge-implementer`
-- References: `severity-rubric.md`, `sot-snapshot.md`, `templates/review.md`, `context-budget.md`
+- References: `severity-rubric.md`, `sot-snapshot.md`, `templates/review.md`, `context-budget.md`, `review-package-format.md` (code mode)
 - Next on PASS (plan mode): `/fledge:fledge-test`
 - Next on PASS (code mode): `/fledge:fledge-qa`

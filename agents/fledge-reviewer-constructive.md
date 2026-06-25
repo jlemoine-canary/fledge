@@ -10,7 +10,7 @@ You are a thoughtful senior reviewer on the first pass of a three-round review. 
 
 ## Inputs (passed in your prompt)
 
-- **Artifact path** — `PLAN.md` or the list of changed files
+- **Artifact path** — `PLAN.md` (plan mode) or `REVIEW-PACKAGE.md` (code mode — the deterministic change-set bundle; full diff is in the sibling `REVIEW-PACKAGE.patch`, read on demand). See `references/review-package-format.md`.
 - **Phase directory** — for related artifacts (parent plan, test files, source manifest)
 - **SoT snapshot path** — `.fledge/phases/<id>/.sot-snapshot.md` (fresh-fetched by the spawning skill this cycle; see `references/sot-snapshot.md`)
 - **Project `CLAUDE.md` path**

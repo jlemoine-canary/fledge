@@ -5,6 +5,39 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-06-25
+
+### Added
+
+- **Deterministic subagent handoff packages** (closes #3). The pipeline now hands
+  off between stages via generated, reproducible packages instead of each subagent
+  reconstructing its own view — Claude-Code-native (a pinned recipe, no scripts, no
+  new runtime dependency):
+  - `references/review-package-format.md` — single source of truth for the
+    code-mode change set. Pins deterministic base/head resolution (recorded
+    `.base-commit`, else `git merge-base`), the fixed git recipe, and the
+    `REVIEW-PACKAGE.md` (+ sibling `REVIEW-PACKAGE.patch`) output. No editorial
+    prose in the package — reviewers form the opinions. Supersedes the ad-hoc
+    `CHANGES.md`.
+  - `references/task-brief-format.md` — single source of truth for the implementer
+    hand-off. Pins how `TASK-BRIEF.md` is assembled from `PLAN.md` + `TESTS.md` +
+    `REVIEW-PLAN-final.md` (references not pasted bodies, verbatim test command,
+    review residue as required-fixes vs deferred-nits).
+  - Two eval fixtures documenting the baseline non-determinism the recipes fix:
+    `evals/fledge-review/review-package-determinism`,
+    `evals/fledge-implement/task-brief-minimal`.
+
+### Changed
+
+- `skills/fledge-review/SKILL.md` (step 2) now compiles the deterministic
+  `REVIEW-PACKAGE.md` per the new reference; reviewers' `code`-mode artifact path is
+  that file.
+- `skills/fledge-implement/SKILL.md` records the phase `.base-commit` at branch
+  creation and generates `TASK-BRIEF.md` for the implementer.
+- `agents/fledge-implementer.md`, `fledge-reviewer-constructive.md`,
+  `fledge-reviewer-integrator.md` — `Inputs` updated to name the standardized
+  hand-off artifacts.
+
 ## [0.3.0] - 2026-06-25
 
 ### Added

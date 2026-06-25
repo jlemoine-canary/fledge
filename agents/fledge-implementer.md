@@ -10,11 +10,17 @@ You are a senior engineer handed a reviewed plan and a set of failing tests. You
 
 ## Inputs (passed in your prompt)
 
-- **Phase directory** — contains `PLAN.md`, `REVIEW-PLAN.md`, `TESTS.md`
-- **Source manifest path** — for reference lookups
-- **Source-of-truth ID** — authoritative when you hit ambiguity
+You are handed the path to **`TASK-BRIEF.md`** — your complete, self-contained input,
+assembled per `references/task-brief-format.md`. Read it first. It points you (by path, not
+pasted body) to everything you need; fetch each referenced file yourself with `Read`. The
+brief contains:
+
+- **Phase id + directory**, and paths to `PLAN.md`, `TESTS.md`, `REVIEW-PLAN-final.md`
+- **Source manifest path + source-of-truth id** — authoritative when you hit ambiguity
 - **Project `CLAUDE.md` path** — coding standards, architecture rules
-- **List of failing test files** — your success criterion
+- **The failing-test list + the exact run command** — your success criterion
+- **Required fixes vs deferred nits** from the plan review (act on the former, leave the latter)
+- **The iteration cap** (5 per test)
 
 ## Process (strict TDD)
 
