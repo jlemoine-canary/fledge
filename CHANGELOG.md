@@ -5,6 +5,50 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-09-11
+
+**Verify this release by:** the next release cut with `/fledge:fledge-writing-skills` producing a
+checklist that continues past "merged" — i.e. it tells you to run `claude plugin marketplace update`
+alongside `claude plugin update`, to check `installed_plugins.json` rather than the command's
+success message, and to name a per-release acceptance artifact in the changelog entry. (This entry
+is itself an instance of that last rule.)
+
+### Changed
+
+- **The release checklist now ends at "verified in a real run", not at "merged"**
+  (`skills/fledge-writing-skills/SKILL.md` § Releasing a skill change, and `README.md`
+  § Releasing changes). Both previously stopped at the version bump and the changelog entry, with
+  the post-merge install as a trailing aside. They now carry six ordered steps — three before the
+  merge, three after — and state plainly that merged work sits inert in a version-gated cache until
+  the cache moves and something exercises it.
+  - **`claude plugin marketplace update fledge` is now named explicitly**, alongside
+    `claude plugin update fledge@fledge`. The directory marketplace caches the plugin's advertised
+    version; without the refresh the listing still names the old one, so the update no-ops *and
+    reports success*. The old README named only the second command — which is precisely how
+    0.2.1, 0.3.0 and 0.4.0 went stale.
+  - **Verification is now defined against the registry, not the success message**: the new version
+    directory must exist under `~/.claude/plugins/cache/fledge/fledge/`, `installed_plugins.json`
+    must show that version with `gitCommitSha` equal to the merge commit, and the cache's `skills/`
+    and `references/` must diff clean against the checkout.
+  - **Every release must now name its own acceptance test.** The changelog entry declares one
+    artifact or observable behavior only that version can produce; step 6 is running the pipeline
+    for real and confirming it appears. This makes "did it ship?" answerable, and catches a change
+    that installs correctly but is inert or wrong.
+- **Four new entries in the "Rationalizations to reject" table**: "it's merged, so it's shipped",
+  "I'll update the plugin next time I use fledge", "`claude plugin update` said it succeeded", and
+  "the diff is obviously correct, a real run is overkill".
+
+### Context
+
+The 2026-09-11 fledge program retro found the installed cache pinned at 0.2.0 since June while the
+repo was at 0.4.0 — 993 references to the 0.2.0 cache path across session transcripts and no other
+version. Versions 0.2.1, 0.3.0 and 0.4.0 were each authored, reviewed, merged and changelogged, and
+**never executed once**: the trigger-first descriptions, the TDD rationalization guards,
+`fledge-writing-skills` itself, `fledge-eval`, and the entire deterministic-handoff redesign
+produced no effect on any ticket for three months, with nothing in the process noticing. 0.5.0 was
+the first release to reach the cache on its merge day. This change makes that the default rather
+than something the user has to remember.
+
 ## [0.5.0] - 2026-09-11
 
 Driven by the first fledge program retro

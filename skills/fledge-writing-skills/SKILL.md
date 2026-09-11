@@ -57,11 +57,21 @@ Skills leak. Once an instruction exists, the agent invents rationalizations to r
 
 ## Releasing a skill change
 
-Every content change merged to `main` must (the installed plugin is a version-gated cache — see `README.md` § Releasing changes):
+**A release ends at "verified in a real run", not at "merged."** The installed plugin is a version-gated cache, so merged work is inert until the cache moves and something actually exercises it. Full mechanics in `README.md` § Releasing changes; the checklist:
+
+**Before merging:**
 
 1. Bump `version` in **both** `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` (keep them in sync). Minor bump for a new skill/surface, patch for a fix.
-2. Add a `CHANGELOG.md` entry under a new version heading.
+2. Add a `CHANGELOG.md` entry under a new version heading, naming **one artifact or observable behavior only this version can produce** — `REVIEW-PACKAGE.md` instead of `CHANGES.md`, a review that cites a checklist item that didn't exist before, a refusal the old version wouldn't have issued. This is the release's acceptance test; without it "did it ship?" has no answer.
 3. If you added a skill, agent, or reference, add it to the relevant `README.md` table/list.
+
+**After merging:**
+
+4. Pull the source checkout (the directory marketplace reads the working copy, not GitHub), then run **both** `claude plugin marketplace update fledge` and `claude plugin update fledge@fledge`. The marketplace caches the advertised version; skip its refresh and the update silently no-ops.
+5. Verify the cache moved: the new version directory exists under `~/.claude/plugins/cache/fledge/fledge/`, and `installed_plugins.json` shows that `version` with `gitCommitSha` equal to your merge commit. Diff the cache's `skills/` and `references/` against the checkout.
+6. Restart, run the pipeline on something real, and confirm the artifact from step 2 appears. **Now** the release is done. If it doesn't appear, the change is inert or wrong — and you have found that out in one run instead of three releases later.
+
+Steps 4–6 are the ones that get skipped, and skipping them is not a cosmetic lapse: 0.2.1, 0.3.0 and 0.4.0 were each merged, changelogged, and never executed once. Three releases of work — the trigger-first descriptions, the rationalization guards, this skill, the eval harness, and the whole deterministic-handoff redesign — produced no effect on any ticket, and nothing in the process noticed for three months. **Do not hand a release back to the user as "shipped" until step 6 passes.**
 
 ## Rationalizations to reject
 
@@ -73,10 +83,14 @@ Every content change merged to `main` must (the installed plugin is a version-ga
 | "This rule is general, it deserves its own reference doc." | One consumer doesn't justify a shared reference. Inline it until a second consumer appears. |
 | "I'll add a `version:` to the skill so it's tracked." | Skills carry no version frontmatter. The plugin version is the single release unit. |
 | "I'll open the description with what the skill does." | Descriptions lead with the `Use when …` triggers — that's what the model routes on before it reads the body. Triggers first, disambiguate after. |
+| "It's merged, so it's shipped." | Merged work sits in a version-gated cache doing nothing. 0.2.1, 0.3.0 and 0.4.0 all merged cleanly and never ran. Shipped means step 6 passed. |
+| "I'll update the plugin next time I use fledge." | That is exactly how three releases went stale. The update is part of the release, not a later chore — and "next time" runs the *old* version, so you won't notice. |
+| "`claude plugin update` said it succeeded." | It reports success when it no-ops on a stale marketplace listing too. Read the cache directory and `installed_plugins.json`, not the success message. |
+| "The diff is obviously correct, a real run is overkill." | The diff being correct is what step 5 checks. Step 6 checks whether the instruction actually changes agent behavior — the same with/without delta RED→GREEN demands, applied to the released artifact. |
 
 ## What this skill does NOT do
 - Run the eval itself — that's `/fledge:fledge-eval` (this skill tells you *how to author*; the eval skill *measures the behavior*).
-- Bump the plugin version or write the CHANGELOG for you — it tells you to; do it.
+- Bump the plugin version, write the CHANGELOG, or run the release for you — it tells you to; do it, through step 6.
 - Author project source code or pipeline artifacts — it authors fledge's own skills/agents/references.
 
 ## Tools needed

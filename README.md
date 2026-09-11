@@ -95,15 +95,33 @@ Fledge writes state into `.fledge/` at the project root:
 
 ## Releasing changes
 
-The installed plugin is a **version-gated cache** (at `~/.claude/plugins/cache/fledge/...`) — `claude plugin update` only picks up changes when the declared version increases. So every content change merged to `main` must:
+The installed plugin is a **version-gated cache** (at `~/.claude/plugins/cache/fledge/<version>/`). Nothing you merge runs until that cache moves. Merging is the middle of a release, not the end.
 
-1. Bump the version in **both** `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` (they must stay in sync).
-2. Add an entry to `CHANGELOG.md`.
+**Before merging:**
 
-Otherwise installed copies silently stay stale. After merging, pull the source checkout and run:
+1. Bump the version in **both** `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` (they must stay in sync). `claude plugin update` is version-gated — without a bump it no-ops and the cache keeps the old files.
+2. Add an entry to `CHANGELOG.md`, and name in it **one artifact or behavior only this version can produce**. That's the release's acceptance test (step 6).
 
-```
-claude plugin update fledge@fledge
-```
+**After merging — all four steps, in order:**
+
+3. Pull the source checkout. The directory marketplace reads this working copy, not GitHub:
+   ```
+   git -C /path/to/fledge pull
+   ```
+4. Refresh the marketplace listing, then update the plugin:
+   ```
+   claude plugin marketplace update fledge
+   claude plugin update fledge@fledge
+   ```
+   **Both commands.** The marketplace caches the plugin's advertised version; skip the refresh and the listing still says the old one, so the update no-ops and reports nothing wrong.
+5. Verify the cache actually moved — don't trust the success message:
+   ```
+   ls ~/.claude/plugins/cache/fledge/fledge/          # the new version directory exists
+   jq '.plugins["fledge@fledge"]' ~/.claude/plugins/installed_plugins.json
+   ```
+   `version` must be the new one and `gitCommitSha` must be your merge commit. Then `diff -rq` the cache's `skills/` and `references/` against the checkout.
+6. **Run it.** Restart, then use the pipeline on something real and confirm the artifact you named in step 2 appears. Until that happens the release is unverified — the cache can be correct while the change itself is inert or wrong.
+
+Steps 3–6 are the ones that get skipped. Versions 0.2.1, 0.3.0 and 0.4.0 were each merged, changelogged, and then **never executed once** — the cache sat on 0.2.0 from June until September while three releases' worth of work did nothing ([retro](https://github.com/jlemoine-canary/fledge/blob/main/CHANGELOG.md#050---2026-09-11)). A release that reaches `main` and stops there has shipped nothing.
 
 Individual `SKILL.md` files intentionally carry no `version:` frontmatter — the plugin version is the single source of truth for releases.
