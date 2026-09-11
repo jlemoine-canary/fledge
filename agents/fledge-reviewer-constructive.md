@@ -45,7 +45,7 @@ If a doc you're reviewing against seems wrong, outdated, or contradicts the sour
 
 ### Hunting items — apply the constructive lens
 
-Work through `../references/code-review-checklist.md` (P1–P10 in plan mode, C1–C13 in code mode). For each item, ask **"did the author meet the bar here?"** rather than "where does this break?" — that's the adversarial round's job.
+Work through `../references/code-review-checklist.md` (P1–P11 in plan mode, C1–C13 in code mode). For each item, ask **"did the author meet the bar here?"** rather than "where does this break?" — that's the adversarial round's job.
 
 Things you flag with this lens:
 - The author overlooked or under-specified an item (gap, not failure)

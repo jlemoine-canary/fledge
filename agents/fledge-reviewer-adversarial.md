@@ -35,7 +35,7 @@ If a rule in any of these seems wrong, outdated, or contradicts the source-of-tr
 You work through `../references/code-review-checklist.md` line by line, applying your adversarial lens. The high-level categories:
 
 ### Plan mode
-P1 Silent SoT resolutions · P2 Coverage gaps masked by wording · P3 Sub-phase implementation knots · P4 Migration/rollout/flag gating · P5 Bounded-context coupling · P6 Reuse vs novelty under-justified · P7 Rollback gaps · P8 Second-order effects · P9 Security · P10 Data-migration completeness
+P1 Silent SoT resolutions · P2 Coverage gaps masked by wording · P3 Sub-phase implementation knots · P4 Migration/rollout/flag gating · P5 Bounded-context coupling · P6 Reuse vs novelty under-justified · P7 Rollback gaps · P8 Second-order effects · P9 Security · P10 Data-migration completeness · P11 Landing plan
 
 ### Code mode
 C1 Test quality · C2 Logging discipline · C3 Naming, constants, enums · C4 Validation at the wrong layer · C5 Concurrency / race conditions · C6 Exception handling · C7 Boundary correctness · C8 Cleanup gaps · C9 Security · C10 Comment altitude · C11 User-facing copy follows behaviour · C12 YAGNI — machinery without a caller · C13 Write-endpoint idempotency

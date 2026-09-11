@@ -36,10 +36,13 @@ For each major piece of work, name an existing pattern/utility/component you con
 If you choose new over reuse, the rationale must cite a concrete defect or mismatch — not a stylistic preference.
 
 ## File plan
-| Action | Path | Purpose |
-|---|---|---|
-| create | backend/myapp/x/y.py | ... |
-| edit | frontend/src/components/Z.vue | ... |
+Every row names the landing unit (`## Landing plan` below) that carries it. A row that
+belongs to two units is two rows.
+
+| PR | Action | Path | Purpose |
+|---|---|---|---|
+| PR1 | create | backend/myapp/x/y.py | ... |
+| PR2 | edit | frontend/src/components/Z.vue | ... |
 
 ## Test plan (TDD)
 List the failing tests to write first. Group by file.
@@ -47,6 +50,26 @@ List the failing tests to write first. Group by file.
 - `backend/myapp/x/tests/test_y.py`
   - `test_<behavior>` — fails until <implementation piece> lands
   - ...
+
+## Landing plan
+How this phase reaches `main`. **Sub-phases split the planning; this splits the shipping** — they
+are not the same cut and often don't line up. One landing unit is fine; say so and why.
+
+| PR | Contents | Depends on | Why its own PR |
+|---|---|---|---|
+| PR1 | Behavior-neutral move of the status vocabulary to the model layer | — | Pure-move diff; reviewable at a glance and unambiguous if it breaks something |
+| PR2 | The selector, bounds, and exclusion logging | PR1 | The substantive change; reviewed on its own rather than buried behind a move |
+
+Rules:
+- **Default to more than one** when the phase has a behavior-neutral move, a migration, a
+  backend/frontend seam, or a piece with no consumer yet. Each of those is an independent revert
+  boundary, and a reviewer can hold one in their head.
+- **A reason per row, and it has to be concrete** — reviewability, an independent revert boundary, a
+  lint/migration rule, deploy ordering. "It's big" is not a reason; name what the split buys.
+- **A piece with no caller in this phase is its own PR or is deferred.** It is the cheapest thing to
+  drop and the most likely to be wrong (see checklist C12).
+- **Size is a symptom, not the criterion.** A 900-line PR that is one coherent change is fine; a
+  300-line PR mixing a move, a migration, and a feature is not.
 
 ## Sub-phases (if any)
 ### <id>.1 — <slug>

@@ -30,7 +30,7 @@ Produce `PLAN.md` for the phase you were spawned to plan. The plan must be direc
 4. **Read the parent plan** (if this is a sub-phase). Your scope is bounded by what the parent deferred to you.
 5. **Read sibling phase plans** (if any) for context on invariants.
 6. **Survey existing code** with Glob/Grep. Your plan must land in real files, not imaginary ones — and you must look for *patterns already solved* in this codebase before inventing new ones.
-7. **Write PLAN.md** (format below).
+7. **Write PLAN.md** (format below). Fill `## Landing plan` deliberately — it is the one section with no natural default. Sub-phases cut the *planning*; the landing plan cuts the *shipping*, and the two rarely coincide. Ask how many times this phase should reach `main`, not how many pieces of work it contains, and give every row a concrete reason. Then check that every `File plan` row names its landing unit.
 8. **Decide: does this phase need sub-phases?** Apply the nesting rule in the `fledge-plan` skill (one level; when in doubt make it a sibling):
    - If yes and this is a top-level phase, list them in a `## Sub-phases` section of PLAN.md. The orchestrator will spawn a planner per sub-phase.
    - If yes and this is already a sub-phase, STOP and return a structured refusal: the parent scope was wrong and needs re-splitting into siblings.
