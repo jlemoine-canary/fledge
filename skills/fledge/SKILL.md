@@ -24,7 +24,6 @@ All other stages run autonomously (subject to context-budget escalations).
 
 - `--from=<stage>` — resume from a specific stage (e.g. `--from=implement` assumes plan + review passed)
 - `--phase=<id>` — operate on a specific phase (default: the top-level phase in `.fledge/phases/`)
-- `--deep` — allow sub-phase depth > 3 (propagates to `/fledge:fledge-plan`)
 - `--dry-run` — print the plan of execution without running subagents
 
 ## Process
@@ -145,4 +144,4 @@ The escalation checkpoint has 3 options:
 
 ## Related
 - Sub-skills: `/fledge:fledge-auth`, `/fledge:fledge-ingest` (with `--append`), `/fledge:fledge-plan`, `/fledge:fledge-review` (plan|code), `/fledge:fledge-test`, `/fledge:fledge-implement`, `/fledge:fledge-qa`
-- References: `checkpoint-protocol.md`, `context-budget.md`, `severity-rubric.md`, `source-manifest-format.md`, `sot-snapshot.md`, `subphase-depth.md`, `templates/`
+- References: `checkpoint-protocol.md`, `context-budget.md`, `severity-rubric.md`, `source-manifest-format.md`, `sot-snapshot.md`, `templates/`

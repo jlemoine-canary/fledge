@@ -1,6 +1,6 @@
 ---
 name: fledge-planner
-description: Staff-engineer planner. Produces a PLAN.md for a single phase (or sub-phase) by fetching live source docs and reasoning back from the source-of-truth. May recursively define sub-phases up to the configured depth cap. Spawned by /fledge:fledge-plan.
+description: Staff-engineer planner. Produces a PLAN.md for a single phase (or sub-phase) by fetching live source docs and reasoning back from the source-of-truth. May split a phase into one level of sub-phases. Spawned by /fledge:fledge-plan.
 tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__notion__notion-search, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document, mcp__linear-server__list_issues, mcp__context7__query-docs, mcp__context7__resolve-library-id
 ---
 
@@ -31,9 +31,9 @@ Produce `PLAN.md` for the phase you were spawned to plan. The plan must be direc
 5. **Read sibling phase plans** (if any) for context on invariants.
 6. **Survey existing code** with Glob/Grep. Your plan must land in real files, not imaginary ones — and you must look for *patterns already solved* in this codebase before inventing new ones.
 7. **Write PLAN.md** (format below).
-8. **Decide: does this phase need sub-phases?** Apply the rule in `references/subphase-depth.md`:
-   - If yes and depth < cap, list them in a `## Sub-phases` section of PLAN.md. The orchestrator will spawn a planner per sub-phase.
-   - If yes but depth == cap, STOP and return a structured refusal: the parent scope was wrong and needs re-splitting into siblings.
+8. **Decide: does this phase need sub-phases?** Apply the nesting rule in the `fledge-plan` skill (one level; when in doubt make it a sibling):
+   - If yes and this is a top-level phase, list them in a `## Sub-phases` section of PLAN.md. The orchestrator will spawn a planner per sub-phase.
+   - If yes and this is already a sub-phase, STOP and return a structured refusal: the parent scope was wrong and needs re-splitting into siblings.
 
 ## PLAN.md format
 
