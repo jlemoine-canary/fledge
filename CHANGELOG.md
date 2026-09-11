@@ -5,6 +5,59 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-09-11
+
+Driven by the first fledge program retro
+(`~/.claude/shared/retros/2026-09-11-fledge-program-retro.md`), which reviewed 98 non-author
+review comments across the 87 PRs authored since 2026-06-01 and the four `.fledge/` projects on
+disk. Every item below is traced to review feedback fledge's own three-round review did not catch.
+
+### Added
+
+- **`references/code-review-checklist.md` — four new code-mode items and one new plan-mode item**,
+  covering the classes that reached human reviewers on fledge-built PRs:
+  - **C10 Comment altitude** — comments that restate the diff, narrate the change, or carry
+    PR-description-length rationale. The single most-repeated style complaint across reviewers
+    (raised on four separate PRs by three people).
+  - **C11 User-facing copy follows behaviour** — when a matching rule or condition changes, grep
+    the feature's tooltips, labels, i18n keys, `aria-label`s, and docstrings. A shipped tooltip
+    read "Automatically linked via matching phone number" after the match moved to email.
+  - **C12 YAGNI — machinery without a caller** — does the new abstraction/cache/memo/knob have a
+    caller in this diff? Memoization landed with "no consumers yet" and had to be walked back.
+    Also covers over-large functions, unvalidated micro-optimizations, and duplicate guards.
+  - **C13 Write-endpoint idempotency** — every new side-effecting `POST`/`PUT` needs a
+    double-click answer; dedup locks must be acquired *after* validation and released on every
+    failure path.
+  - **P10 Data-migration completeness** — for any new column/filter/index: who backfills the
+    existing rows, which *other* query's plan just changed, and which sibling surfaces share the
+    model. Also: a remediation's `UPDATE` must re-apply the predicates its `SELECT` used.
+
+### Changed
+
+- **C1 extended — "prove the guarantee, not the framework."** The mutation-test rule was stated
+  generically and missed the same three shapes repeatedly: database-level defaults (a test using
+  `objects.create()` passes with `db_default` deleted), CLI flag matrices, and arguments
+  advertised as safety boundaries (assert *isolation*, and assert *which* error). Six of the
+  seven review findings in this class came from the review bot, not from fledge.
+- **P1 sharpened** — names "add a new X" vs "change the existing X" as the highest-cost silent
+  source-of-truth resolution. Both readings compile; the miss surfaced three weeks later as a
+  revert.
+- **C9** — new write endpoints get one extra pass for reuse of a read-scoped auth/permission class.
+- `agents/fledge-reviewer-adversarial.md`, `agents/fledge-reviewer-constructive.md` — checklist
+  indexes updated to P1–P10 / C1–C13.
+
+### Removed
+
+- **`references/subphase-depth.md`** and the `/fledge-plan --deep` flag. Zero of the four real
+  fledge projects produced more than one phase, so the depth-3 cap, the recursion past level 2,
+  and the escape hatch were never exercised — and the doc's own advice ("flat is better than
+  nested") argued against them. Replaced by a fixed rule inline in `skills/fledge-plan/SKILL.md`:
+  one level of sub-phases, then siblings; when in doubt, sibling. The numbering convention and the
+  sub-phase-vs-sibling decision rule moved there intact.
+- Consequently trimmed: the `--deep` argument in `skills/fledge/SKILL.md`, the depth-level and
+  depth-cap plumbing in `skills/fledge-plan/SKILL.md` and `agents/fledge-planner.md`, and the
+  "Depth justification" line in `references/templates/plan.md`.
+
 ## [0.4.0] - 2026-06-25
 
 ### Added

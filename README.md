@@ -20,7 +20,7 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 | `/fledge` | Top-level orchestrator — runs the full pipeline with checkpoints |
 | `/fledge-auth` | Verify MCP connections (Notion, Linear, GitHub, Figma, Playwright) |
 | `/fledge-ingest` | Fetch and index source docs; set source-of-truth. `--append` to add to an existing project. |
-| `/fledge-plan` | Staff-engineer plan for a phase (recurses into sub-phases, max depth 3) |
+| `/fledge-plan` | Staff-engineer plan for a phase (may split into one level of sub-phases) |
 | `/fledge-review` | Three-round review on a plan or implementation. Pass mode `plan` or `code`. |
 | `/fledge-test` | Write failing tests (TDD red) |
 | `/fledge-implement` | Senior-engineer TDD iteration until tests pass |
@@ -52,7 +52,6 @@ Fledge maintains its own skill library. These are not pipeline stages — they k
 - `references/source-manifest-format.md` — `.fledge/SOURCES.md` format
 - `references/sot-snapshot.md` — one fetch per review cycle, all personas read the snapshot
 - `references/checkpoint-protocol.md` — orchestrator-owned checkpoint mechanics
-- `references/subphase-depth.md` — depth cap and escape hatch
 - `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
 - `references/review-package-format.md` — deterministic code-mode change-set bundle (`REVIEW-PACKAGE.md`) the reviewers consume
 - `references/task-brief-format.md` — deterministic minimal brief (`TASK-BRIEF.md`) the implementer consumes

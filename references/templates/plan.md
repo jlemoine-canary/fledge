@@ -16,7 +16,6 @@ no UI and no externally-reachable service surface.>
 ## Scope
 - **In scope:** <bullets>
 - **Out of scope:** <bullets — and where out-of-scope work lives>
-- **Depth justification** (only if --deep): <why this needs level 4+>
 
 ## Bounded context
 - **Domain / Django app this work belongs to:** <name>
