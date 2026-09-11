@@ -18,6 +18,7 @@ TDD green stage. Spawn `fledge-implementer` with the reviewed plan and failing t
 - **Phase id** (e.g. `01-auth-refactor`). If omitted, use the most recent phase with a PASS plan review.
 - **`--leaves-first`** — if the phase has sub-phases, implement leaves before parents (default)
 - **`--here`** — implement just this phase, not its sub-phases
+- **`--pr=<id>`** — implement only the named row of the plan's `## Landing plan` (e.g. `--pr=PR2`). Default: the first row not yet landed.
 
 ## Process
 
@@ -25,12 +26,16 @@ TDD green stage. Spawn `fledge-implementer` with the reviewed plan and failing t
 
 Before any code change:
 
+0. **Read the plan's `## Landing plan`.** It says how many times this phase reaches `main`. One row → implement the phase as one branch. More than one row → **implement one row at a time**, in dependency order, each on its own branch off the previous one's head (or off the default branch when it has no dependency). Do not start a row whose `Depends on` has not landed. Take only the `File plan` rows tagged with the row you're implementing.
+
+   If the plan has no `## Landing plan` (it predates the section, or the planner skipped it), treat the phase as one landing unit and say so in `IMPLEMENTATION.md` — don't invent a split the reviewer never saw.
+
 1. **Worktree & branch check.** Prefer a dedicated git worktree over a shared checkout (e.g. the repo's main checkout) — concurrent agent sessions sharing one working tree + HEAD collide (another session's `checkout`/`commit`/`push` moves the branch ref and HEAD, reverts your files, or lands your commit on the wrong branch). Determine current vs default branch with `git rev-parse --abbrev-ref HEAD` and `git symbolic-ref refs/remotes/origin/HEAD`.
    - If not already in a dedicated worktree for this branch, create one off the up-to-date default: `git fetch origin <default>`, then `git worktree add <path> -b <git-user>/<TICKET-ID>/<phase-slug> origin/<default>`, and run from there. Confirm with `git worktree list` and that the branch's merge-base is a default-branch commit.
      - `git-user`: prefix of `git config user.email` before `@`
      - `TICKET-ID`: first `linear-issue` ref in `.fledge/SOURCES.md` (e.g. `STAY-2122`); if none, use the phase id (e.g. `01-auth-refactor`)
-     - `phase-slug`: phase id with leading number stripped, kebab-case
-     - Example branch: `jlemoine/STAY-2122/auth-refactor`
+     - `phase-slug`: phase id with leading number stripped, kebab-case — **or, when the plan's `## Landing plan` has more than one row, that row's slug instead**, so each landing unit gets its own branch and its own PR
+     - Example branch: `jlemoine/STAY-2122/auth-refactor`, or `jlemoine/STAY-2122/model-vocabulary` for `PR1` of a multi-row landing plan
    - If the user explicitly wants to stack on another in-flight branch: base the worktree on that branch instead of the default, and say so.
    - If already on a suitable non-default branch in a dedicated worktree: stay put. Print `Continuing on branch <name>.`
    - Never disturb another worktree's/checkout's uncommitted files. If the only checkout is occupied by unrelated uncommitted work, ASK the user (don't stash silently).
@@ -110,19 +115,21 @@ If the user opted out of mid-fledge commits, leave the changes uncommitted and n
 ### 5. Output
 
 ```
-✓ Phase <id> implemented.
+✓ Phase <id> — <PR row id> implemented (<n> of <total> landing units).
+  Branch: <branch>
   Files changed: <N>
   Tests passing: <N>
   Non-blocking plan nits deferred: <N> (listed in IMPLEMENTATION.md)
 
 Next: /fledge:fledge-review code <id>
+  Remaining landing units: <ids, or "none">
 ```
 
 ## Context-budget management
 
 Implementation can touch many files — keep the orchestrator context low by passing **paths** to the implementer, not file contents. The implementer has `Read` and will fetch what it needs.
 
-If a phase has >10 files in its plan, consider splitting across two implementer spawns — by file group. The orchestrator does this split if the plan allows clean separation.
+If a single landing unit still has >10 files, consider splitting across two implementer spawns — by file group. That is a context-budget split within one PR, not a second PR; the PR boundaries are the plan's to set, not the orchestrator's.
 
 ## What this skill does NOT do
 - Write tests (that's `/fledge:fledge-test`)

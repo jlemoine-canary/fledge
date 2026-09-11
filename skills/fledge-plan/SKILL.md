@@ -16,6 +16,17 @@ Produce `PLAN.md` for a phase. Spawns `fledge-planner` subagent. If the planner 
 
 - **Phase identifier** — e.g. `01-auth-refactor`. If omitted, derive from the source-of-truth title and prompt user to confirm.
 
+## Landing plan vs. sub-phases
+
+Two different cuts, and conflating them is why phases ship as one oversized PR:
+
+- **Sub-phases** divide the *planning and implementation* work. They are about scope and dependency.
+- **The landing plan** divides how the phase reaches `main`. It is about review and revert boundaries.
+
+A phase with no sub-phases can still land as three PRs; a phase with three sub-phases can land as one.
+The planner fills `## Landing plan` in `PLAN.md`; `/fledge:fledge-implement` branches per row in it.
+Format and the slicing rules live in `references/templates/plan.md`.
+
 ## Nesting: one level, then siblings
 
 A phase may have sub-phases. A sub-phase may not. Past one level the plan stops being readable by a human at the final checkpoint, and every level adds a subagent hop and its handoff risk.

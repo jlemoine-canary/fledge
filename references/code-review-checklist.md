@@ -50,6 +50,13 @@ P4 covers migration *ordering* and gating. This item covers the rows and queries
 
 Also check that a remediation's `UPDATE`/`DELETE` re-applies the same predicates used to *select* the candidate ids. Re-reading ids into a bare `filter(id__in=...)` drops the safety bounds the selection step established, and rows can change between the two steps.
 
+### P11. Landing plan
+The plan's `## Landing plan` says how many times this phase reaches `main`. Review it as a claim, not a formality:
+
+- **A single landing unit needs a reason, and "it's all one feature" isn't one.** Look for the seams the plan passed over: a behavior-neutral move bundled with the change that motivated it, a migration riding along with the code that reads it, a backend and frontend half that could ship a day apart, a piece with no caller in this phase. Each is an independent revert boundary that was given up.
+- **Check the split is real.** Every `File plan` row names a unit, no row appears under two, and each unit's `Depends on` forms an order you could actually land in. A unit that can't be merged without a later one isn't a unit.
+- **Don't reward fragmentation either.** Units that must land together within the hour to keep `main` working are one PR with extra ceremony. The test is whether each can sit on `main` on its own.
+
 ---
 
 ## Code-mode hunting items

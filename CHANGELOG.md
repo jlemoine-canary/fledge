@@ -5,6 +5,67 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-09-11
+
+**Verify this release by:** the next `PLAN.md` fledge produces containing a `## Landing plan` table
+whose rows are echoed in the `File plan`'s new `PR` column — and, when that plan has more than one
+row, `/fledge:fledge-implement` opening one branch per row instead of one per phase.
+
+### Added
+
+- **`## Landing plan` in the plan template** (`references/templates/plan.md`) — how the phase reaches
+  `main`, as a table of `PR | Contents | Depends on | Why its own PR`. Distinct from `## Sub-phases`:
+  sub-phases cut the *planning*, the landing plan cuts the *shipping*, and the two rarely coincide.
+  Carries four rules: default to more than one unit when there's a behavior-neutral move, a migration,
+  a backend/frontend seam, or a piece with no consumer; a concrete reason per row; a caller-less piece
+  is its own PR or is deferred; and **size is a symptom, not the criterion** — a coherent 900-line PR
+  is fine, a 300-line PR mixing a move, a migration and a feature is not.
+- **`PR` column on the `File plan` table.** Every row names the unit that carries it; a row belonging
+  to two units is two rows. This is the table `/fledge:fledge-implement` reads, so without it a good
+  split never reaches the branch.
+- **`--pr=<id>` on `/fledge:fledge-implement`**, and a new step 0 that reads the landing plan before
+  any code change: one row → one branch as before; more than one → one row at a time in dependency
+  order, each on its own branch, taking only the `File plan` rows tagged with it. Plans predating the
+  section are treated as one unit and say so in `IMPLEMENTATION.md` rather than inventing a split the
+  reviewer never saw.
+- **`P11. Landing plan`** in `references/code-review-checklist.md` — review the split as a claim.
+  A single unit needs a reason better than "it's all one feature"; every `File plan` row names a unit
+  and no row appears twice; and units that must land together within the hour are one PR with extra
+  ceremony, not three.
+- **Eval fixture `evals/fledge-plan/pr-slice-declaration/`** with both arms recorded.
+
+### Changed
+
+- `agents/fledge-planner.md` step 7 — fill the landing plan deliberately; it is the one section with
+  no natural default. Ask how many times this phase should reach `main`, not how many pieces of work
+  it contains.
+- `skills/fledge-plan/SKILL.md` — new "Landing plan vs. sub-phases" section naming the two cuts.
+- `skills/fledge-implement/SKILL.md` — branch slug is the landing-unit slug when the plan has more
+  than one row; output reports which unit landed and what remains. The context-budget note now says a
+  >10-file split across implementer spawns is a split *within* one PR — PR boundaries are the plan's
+  to set, not the orchestrator's.
+- Reviewer checklist indexes → `P1–P11`.
+
+### Evidence
+
+RED, from `evals/fledge-plan/pr-slice-declaration/result-2026-09-11-baseline.md`: a baseline planner
+given the real CC-3083 ticket scored **2 of 5** criteria. It did split — into `## Sub-phases` with
+dependencies — but only the smallest unit mentioned a PR, the unit corresponding to the real
++1610-line PR (#53519, open 24 days) carried no PR-boundary reasoning at all, and the `File plan` was
+one undifferentiated table with two sub-phases collapsed into a single cell. Across all of 0.5.1,
+grep for slice / shippable / "one PR per" / "separate PRs" returned **zero matches**, and
+`fledge-implement` created exactly one branch per phase — so one PR per phase was structural, not a
+judgment lapse.
+
+Corroborated by the four real `PLAN.md` artifacts on disk: none has a landing section. The one that
+did work out a PR split (`01-span-date-proxy`) did so only because a project lint rule forced it, and
+wrote the answer into `PRECONDITION-PRS.md` — an ad-hoc file no skill defines and no reviewer knows
+to check.
+
+GREEN: **5 of 5**, with the arm using the template's exact section name, column headers and rule text.
+One validity caveat is recorded in the result file — the arms differed in Linear access, which is not
+what flipped criteria 1/3/5 but was uncontrolled; the fixture is now hermetic.
+
 ## [0.5.1] - 2026-09-11
 
 **Verify this release by:** the next release cut with `/fledge:fledge-writing-skills` producing a

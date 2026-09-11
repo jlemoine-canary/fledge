@@ -52,6 +52,7 @@ Fledge maintains its own skill library. These are not pipeline stages — they k
 - `references/source-manifest-format.md` — `.fledge/SOURCES.md` format
 - `references/sot-snapshot.md` — one fetch per review cycle, all personas read the snapshot
 - `references/checkpoint-protocol.md` — orchestrator-owned checkpoint mechanics
+- `references/templates/plan.md` — the `PLAN.md` shape, incl. `## Landing plan` (how the phase reaches `main`)
 - `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
 - `references/review-package-format.md` — deterministic code-mode change-set bundle (`REVIEW-PACKAGE.md`) the reviewers consume
 - `references/task-brief-format.md` — deterministic minimal brief (`TASK-BRIEF.md`) the implementer consumes
