@@ -191,10 +191,18 @@ When a matching rule, channel, condition, or unit changes, the strings describin
 
 - tooltips, labels, empty states, toasts, `aria-label`s
 - i18n keys and their default values
-- docstrings and type-hint comments on the changed function
-- the PR description itself, against the final diff
+- docstrings and type-hint comments on the changed function — **these are C10's, not this
+  item's.** The grep finds them here; score them there, so one line has one owner.
+- the PR description itself, against the final diff — **C8's**, and non-blocking
 
-A feature that now matches on email address while its tooltip still reads "Automatically linked via matching phone number" is a user-visible defect, not a nit.
+A feature that now matches on email address while its tooltip still reads "Automatically linked
+via matching phone number" is a user-visible defect, not a nit — and that is now in the rubric
+rather than asserted here. See `severity-rubric.md`: a contradictory user-facing string is
+**major / consequential = yes**, as is a contradictory `aria-label`, which gets its own row
+because its reader has no fallback — a sighted user can see the button disagrees with the
+tooltip, a screen-reader user is simply told the wrong thing. The fix is editing a string, so
+the usual cost argument for deferring doesn't apply. The one exception is i18n: correcting the
+source value blocks, re-translating the remaining locales is a tracked follow-up that doesn't.
 
 ### C12. YAGNI — machinery without a caller
 For every new abstraction, cache, memo, parameter, hook, or config knob: **does it have a caller in this diff?**

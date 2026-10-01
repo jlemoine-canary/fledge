@@ -66,6 +66,19 @@ cache didn't move.
 - `skills/fledge-implement/SKILL.md` step 3 — verify the `## Comment pass` counts against the
   diff before review. Cheap place to catch it, now that review blocks on it.
 - Both reviewer personas are pointed at `comment-pass.md` as required reading.
+- **C11 is scored in the rubric too, and the two carve-outs now divide cleanly.** C11 had been
+  asserting its own severity in prose ("a user-visible defect, not a nit") — correct, and the
+  only such claim in the checklist with nothing behind it. A contradictory user-facing string is
+  now **major / consequential = yes**, and so is a contradictory `aria-label`, which gets its own
+  row: a sighted user can see that the button disagrees with the tooltip and correct for it, and
+  a screen-reader user is simply told the wrong thing with nothing to check it against. The cost
+  argument runs out here as it does for C10 — the fix is editing a string. **i18n is the one real
+  exception** and is therefore two rows: correcting the default/source value blocks, while
+  re-translating the remaining locales is a tracked follow-up that does not.
+  - The carve-outs are now one section with a stated boundary: **C10 governs text a developer
+    reads, C11 governs text a user reads.** A docstring contradicting new behaviour is C10's even
+    though C11's grep list finds it, and the PR description is C8's. One owner per line — the
+    C8/C10 overlap below is what happens without that rule.
 - **`references/code-review-checklist.md` C1 — the mutation test is executable again.** The item
   told reviewers to "mutation-test mentally", while its own sub-items demanded running the thing
   and watching it go red. The disposition won, and the receipt is in the retro: **six of the
