@@ -43,5 +43,7 @@ must be able to point at a transcript line or produced artifact and call pass/fa
 
 | Skill | Scenario | What it checks |
 |---|---|---|
+| `fledge-implement` | `comment-rot-at-write-time` | The implementer doesn't *author* rot-prone comments — no docstring pinning the return shape, no enum values copied into prose — while still commenting the one constant whose value is unguessable. |
+| `fledge-implement` | `comment-altitude-pass` | Review-side backstop: given a file full of bad comments, the cleanup pass tells a keep from a delete instead of purging. Baseline passes this one — see its result file. |
 | `fledge-test` | `private-function-test` | The agent tests behavior through the public API instead of calling a private `_helper()` directly. |
 | `fledge-writing-skills` | `no-baseline-failure` | The agent refuses to write a skill until it has documented a real baseline failure (no skill from imagination). |

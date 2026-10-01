@@ -48,6 +48,11 @@ discipline. Treat each of these thoughts as a stop sign:
 - *"I'm stuck after a few tries but close — one more clever hack will do it."* If you've
   iterated 5 times on one test, STOP and write `BLOCKED-<test-name>.md`. Grinding past the
   cap produces tangled code, not a fix.
+- *"This comment is accurate, so there's no harm leaving it."* Accuracy today is not the bar —
+  every rotted comment was accurate once. The bar is whether the line can become false without
+  anyone editing it. If it can, you are writing a future lie with a long fuse.
+- *"I'll document the return shape / the enum values in the docstring instead."* That is the
+  same rot in different syntax. The rule is about the shape, not the comment marker.
 - *"GPG signing is blocking me — I'll just commit with `--no-gpg-sign` to keep moving."*
   Never. Signing failures get a `BLOCKED-gpg.md` and an escalation, not a bypass.
 - *"Local tests/typecheck pass, so CI will pass."* Local-convenience invocations hide
@@ -65,7 +70,12 @@ discipline. Treat each of these thoughts as a stop sign:
    - When in doubt, open `.github/workflows/*.yml` for the service you're touching and grep for the exact command. The workflow file is the source of truth for "what does CI do".
 
 3. **Cleanup pass** (every phase, no exceptions):
-   - No stale comments left from earlier iterations or LLM scratch
+   - **The comment pass** — run `../references/comment-pass.md` in full. Enumerate the
+     comments your diff adds, give each one a keep-with-exception or delete verdict, apply
+     the deletions, and record the counts. Do not substitute a glance over the diff for the
+     enumeration: this rule has been written down for a long time and keeps being skipped
+     precisely because "I didn't add many comments" feels like having checked. Run the
+     `git diff` command in that file and answer for each line it prints.
    - No committed screenshots or scratch files
    - No debug logging beyond what the plan specified
    - Run `git status` and `git diff --stat` — confirm the change set matches the plan's `## File plan`. Surprises here are usually scratch you forgot to discard.
@@ -77,7 +87,8 @@ discipline. Treat each of these thoughts as a stop sign:
 
 - Honor `CLAUDE.md` absolutely. If `CLAUDE.md` says "never v-html user content", you do not v-html user content, regardless of what the plan says.
 - Read `~/.claude/shared/working-agreements.md` (if it exists) — these are the user's cross-project standards.
-- Default to no comments. Write code whose names explain it. **Never leave LLM-style scratch comments** ("// updated to fix bug", "# now uses new pattern", recommendations from openspec docs, etc.). These are review noise and get flagged every time.
+- **Default to zero comments.** Write code whose names explain it. A comment is the exception and carries the burden of proof — it survives only by naming one of the four exceptions in `../references/comment-pass.md`, and when in doubt it goes.
+- **Write no comment that can rot.** Nothing pinning a field's current values, a payload or response shape, what another file does, or a measured number. The test is *could this line become false without anyone editing it?* — if yes, don't write it. Nothing verifies comments, so they go stale silently and then actively mislead, which is worse than never having written them. **Never leave LLM-style scratch comments** ("// updated to fix bug", "# now uses new pattern", recommendations from openspec docs, etc.) — these are review noise and get flagged every time.
 - No backwards-compatibility shims, no dead code markers, no "removed X" comments.
 - No scratch artifacts in the change set — no leftover screenshots in `tmp/` or `docs/`, no `.claude/` notes, no debug print statements.
 - For risky changes, consider the `@isolate` decorator if the project uses it.

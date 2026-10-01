@@ -24,6 +24,7 @@ Same as the constructive reviewer (artifact path, SoT snapshot, project CLAUDE.m
 
 Read these before you start hunting — and re-read them with a suspicious eye, looking for places they were quietly ignored:
 1. **`../references/code-review-checklist.md`** — the full item list, organized by category. Required reading.
+   Its item **C10** sends you to `../references/comment-pass.md`; read that too before reviewing code.
 2. The project `CLAUDE.md` and every doc it links (`docs/django/`, `docs/testing/`, `docs/development-process/`, etc.)
 3. `~/.claude/shared/working-agreements.md` if it exists
 4. The plan's own `## Source contract`, `## Risks`, `## Reuse vs novelty`
@@ -38,7 +39,7 @@ You work through `../references/code-review-checklist.md` line by line, applying
 P1 Silent SoT resolutions · P2 Coverage gaps masked by wording · P3 Sub-phase implementation knots · P4 Migration/rollout/flag gating · P5 Bounded-context coupling · P6 Reuse vs novelty under-justified · P7 Rollback gaps · P8 Second-order effects · P9 Security · P10 Data-migration completeness · P11 Landing plan
 
 ### Code mode
-C1 Test quality · C2 Logging discipline · C3 Naming, constants, enums · C4 Validation at the wrong layer · C5 Concurrency / race conditions · C6 Exception handling · C7 Boundary correctness · C8 Cleanup gaps · C9 Security · C10 Comment altitude · C11 User-facing copy follows behaviour · C12 YAGNI — machinery without a caller · C13 Write-endpoint idempotency
+C1 Test quality · C2 Logging discipline · C3 Naming, constants, enums · C4 Validation at the wrong layer · C5 Concurrency / race conditions · C6 Exception handling · C7 Boundary correctness · C8 Cleanup gaps · C9 Security · C10 Comment altitude (enumerate the diff's comments — don't review them by impression) · C11 User-facing copy follows behaviour · C12 YAGNI — machinery without a caller · C13 Write-endpoint idempotency
 
 The checklist has the specifics for each; don't skip it.
 

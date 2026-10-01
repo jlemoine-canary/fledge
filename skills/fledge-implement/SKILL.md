@@ -87,7 +87,19 @@ The implementer writes `IMPLEMENTATION.md` with:
 After implementer returns success:
 1. Run the full test suite — confirm no regressions in untouched areas
 2. Run lint/typecheck per `CLAUDE.md` (`make check-fix`, `make typecheck-backend`, etc.)
-3. If any fail, re-spawn implementer with the failures
+3. **Confirm the comment pass ran.** `IMPLEMENTATION.md` must have a `## Comment pass` section
+   whose counts match the diff:
+
+   ```bash
+   git diff "$(cat .fledge/phases/<id>/.base-commit)" HEAD -U0 \
+     | grep -cE '^\+\s*(#|//|/\*|\*|<!--)'
+   ```
+
+   A missing section, or a count that doesn't match, means re-spawn the implementer to run
+   `references/comment-pass.md` — don't let it reach review unadjudicated. Review treats these
+   as blocking findings (`references/severity-rubric.md`), so catching it here is the cheap
+   place to catch it.
+4. If any fail, re-spawn implementer with the failures
 
 ### 4. Commit
 
@@ -143,6 +155,6 @@ If a single landing unit still has >10 files, consider splitting across two impl
 
 ## Related
 - Subagent: `fledge-implementer`
-- References: `task-brief-format.md` (the brief recipe), `context-budget.md`
+- References: `task-brief-format.md` (the brief recipe), `comment-pass.md` (the cleanup-pass procedure), `context-budget.md`
 - Next: `/fledge:fledge-review code`
 - Back-steps: `/fledge:fledge-test` (test defect), `/fledge:fledge-review plan` (plan deviation)

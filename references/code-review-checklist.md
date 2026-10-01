@@ -120,13 +120,56 @@ Run the full security section of the project `CLAUDE.md`, line by line, against 
 New write endpoints need one extra pass: **does this reuse an auth/permission class scoped for reading?** A read-scoped auth class attached to a route that sends, charges, or dispatches grants the send to everyone who can view. Reusing the class is a finding unless the PR says why read access is the correct bar for this write.
 
 ### C10. Comment altitude
-Comments should carry non-obvious constraints. They should not carry the diff, the changelog, or the reasoning that belongs in the PR description. All three are findings:
+**Read `comment-pass.md` and run its procedure against the diff.** That file is the standard;
+this item is the review of it. Don't review comments by impression — enumerate them:
 
-- **Comments that restate the code.** If the line below says what the comment says, delete the comment.
-- **Comments that narrate the change.** "the deleted `ChannelTabsRow` used to own this", "updated to fix the null case", "moved here from X" — this is commit-message and PR-description content. In the source it goes stale the moment anything moves, and it reads as history to someone who never saw the before state.
-- **Comments carrying design rationale at essay length.** Good PR-description material, wrong home. Keep the one sentence naming the constraint; move the rest.
+```bash
+grep -nE '^\+\s*(#|//|/\*|\*|<!--)' .fledge/phases/<id>/REVIEW-PACKAGE.patch
+```
 
-Keep: why a non-obvious bound was chosen, which invariant makes an apparently-unsafe line safe, a link to the ticket for a deliberate deviation.
+Run it against the saved patch, not a live `git diff` — that is the whole point of
+`review-package-format.md`, and it is what keeps the constructive and adversarial rounds
+arguing about the same set of lines.
+
+Every line that prints is either a keep under one of `comment-pass.md`'s four exceptions —
+non-obvious bound, the invariant making an unsafe-looking line safe, `TODO(TICKET-ID)`, an
+external constraint the code can't express — or it is a finding. There is no "harmless"
+verdict; a comment that is merely harmless has not met the burden of proof.
+
+The shapes, in the order they are missed:
+
+- **Pins current behavior.** The one the other rules miss, because it reads as documentation:
+  a field's current values, a payload or response shape, what another file does, a count or a
+  timing. **The test: could this line become false without anyone editing it?** If yes, it is
+  a finding. Nothing fails when the enum gains a member — the comment just quietly starts
+  lying, and the next reader believes it.
+- **Restates the code.** If the line below says what the comment says, it is duplication with
+  nothing holding the two halves together.
+- **Narrates the change.** "the deleted `ChannelTabsRow` used to own this", "updated to fix
+  the null case", "moved here from X" — commit-message and PR-description content. In the
+  source it goes stale the moment anything moves, and it reads as history to someone who
+  never saw the before state.
+- **Design rationale at essay length.** Good PR-description material, wrong home. Keep the
+  one sentence naming the constraint; move the rest.
+- **A future-work callout with no ticket.** A bare `TODO:` / `FIXME:` is a finding; the form
+  is `TODO(TICKET-ID):`.
+- **Commented-out code**, in any quantity.
+
+**Severity.** These are not nits — see the explicit carve-out in `severity-rubric.md`. A
+comment that contradicts the code *today* is a **major** defect on the same footing as C11
+user-facing copy: it is wrong information that a reader will act on. The rot-prone, restating,
+narrating and essay shapes are **minor / consequential = yes** — they violate a standing rule
+in the user's working agreements, and the fix is a deletion, so there is no cost argument for
+deferring them.
+
+**Also check the pass happened.** `IMPLEMENTATION.md` must carry a `## Comment pass` section
+with counts and one line per surviving comment naming its exception. Counts that don't match
+the diff, or survivors with no named exception, are a finding in their own right — the pass
+was signed off without being run.
+
+**Do not over-correct.** Demanding the deletion of a genuine keep is also a finding against the
+reviewer. The rule is a judgment, not a purge: the `# 200 is the provider's page cap` note and
+the `# safe to index [0] — the filter above excludes empty sets` note both stay.
 
 ### C11. User-facing copy follows behaviour
 When a matching rule, channel, condition, or unit changes, the strings describing it usually don't — nothing type-checks prose. Whenever the diff changes *what* something matches on or *when* something fires, grep the touched feature for:

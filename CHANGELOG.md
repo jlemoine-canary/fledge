@@ -5,6 +5,100 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-10-01
+
+**Verify this release by:** the next `IMPLEMENTATION.md` fledge produces carrying a
+`## Comment pass` section — counts for comments added / kept / deleted, and one row per
+surviving comment naming the exception that saved it. A ticked checkbox with no rows means the
+cache didn't move.
+
+### Added
+
+- **`references/comment-pass.md`** — one procedure, run twice: by `fledge-implementer` as the
+  last step before writing `IMPLEMENTATION.md`, and by the reviewers as C10. The move is from a
+  disposition to a list. "Default to zero comments" has been written down for months and
+  comments keep shipping, because a disposition is never executed and a list is: enumerate the
+  comments the diff adds, then give each one a **keep-with-named-exception or delete** verdict.
+  There is no third verdict — "harmless" is a delete, since a comment that is merely harmless
+  has not met the burden of proof.
+  - The **keep list is closed**, four entries: a non-obvious bound or ordering; the invariant
+    that makes an apparently-unsafe line safe; a deliberate deviation as `TODO(TICKET-ID):`;
+    an external constraint the code cannot express. Closing the list is what makes "burden of
+    proof" operational rather than hortatory.
+  - Explicitly **not** in scope and never deleted by the pass: machine-read directives
+    (`# noqa`, `# type: ignore`, pragmas), licence and generated-file headers, and docstrings
+    the project's own tooling requires. The rule is a judgment, not a purge.
+- **The rot-prone shape, which was genuinely missing from the written standard.** C10 covered
+  comments that restate the code, narrate the change, or run to essay length. It said nothing
+  about the shape that reads as *documentation*: a field's current values, a payload or
+  response shape, what another file does, a count or a timing. The test is now explicit —
+  **could this line become false without anyone editing it?** Nothing fails when the enum gains
+  a member, so it rots silently and then actively misleads, which is worse than never having
+  been written.
+- **`## Comment pass` section in `references/templates/implementation.md`** — counts plus one
+  row per survivor naming its exception. This is the part the reviewer can check against the
+  patch; the old `- [x] No stale comments` line was unfalsifiable self-report, and it is gone.
+- **Two eval fixtures** under `evals/fledge-implement/`: `comment-rot-at-write-time` (does the
+  implementer *author* rot-prone comments?) and `comment-altitude-pass` (given a file full of
+  them, can the cleanup pass tell a keep from a delete?). Both arms recorded for both.
+
+### Changed
+
+- **`references/severity-rubric.md` — comment altitude is carved out of `nit`.** This is the
+  routing fix, and it is probably the most consequential line in the release. A comment finding
+  reads as style, "style" scores as `nit`, `nit` is always non-blocking and lands on a list the
+  implementer addresses "opportunistically" — which is never. The rule was being *stated* and
+  then *routed to the floor*. Comment findings are now `minor / consequential = yes` (so,
+  blocking), and a comment that contradicts the code today is `major`, on the same footing as
+  C11 user-facing copy: wrong information a reader will act on. The justification is that the
+  fix is a deletion — there is no cost argument for deferring the removal of a line. Only the
+  phrasing of a correctly-*kept* comment remains a nit.
+- The rubric's "consequential" test now names `~/.claude/shared/working-agreements.md` alongside
+  the project `CLAUDE.md`. The reviewers already read both; only one of them bound.
+- `references/code-review-checklist.md` C10 — rewritten around the enumeration, run against
+  `REVIEW-PACKAGE.patch` so the constructive and adversarial rounds argue about the same lines.
+  Adds a check that the pass *happened* (counts match the patch, every survivor names an
+  exception) and a counter-rule: **demanding deletion of a genuine keep is a finding against the
+  reviewer.**
+- `agents/fledge-implementer.md` — comment pass is now the first item of the cleanup pass, with
+  the enumeration command; the coding standard gains the write-time rot rule; two new entries in
+  "Rationalizations to reject" ("it's accurate right now", "I'll put it in the docstring instead").
+- `skills/fledge-implement/SKILL.md` step 3 — verify the `## Comment pass` counts against the
+  diff before review. Cheap place to catch it, now that review blocks on it.
+- Both reviewer personas are pointed at `comment-pass.md` as required reading.
+
+### Evidence
+
+**Honest summary: the evals did not produce the RED this change was written to fix, and the
+claim has been narrowed to match.**
+
+Four subagent runs across two fixtures. On `comment-rot-at-write-time` — a plan whose prose
+contains four standing invitations to write rot-prone comments — **both arms scored 6/6**. The
+baseline wrote no enum copy, no supersession note, no bare `TODO:`, no docstring pinning the
+return shape, and correctly commented the one constant whose value is unguessable. On
+`comment-altitude-pass` both arms also passed. Note that the WITHOUT arms inherit
+`~/.claude/shared/working-agreements.md` and cited it by name, so these runs compare **the rule
+as already written against the rule as a pass** — not rule against no-rule.
+
+One real failure was observed, in four runs: a baseline arm deleted a comment restating a method
+name and then wrote a docstring **pinning the returned dict's keys in its place**, having just
+removed a serializer-payload comment for being that exact shape. It had a rule about the comment
+and none about the shape. That is the gap `comment-pass.md` names.
+
+The delta that did reproduce in both WITH arms is **auditability, not code quality**: the WITH
+arms produced counts, a verdict per comment, and a list of candidates rejected before writing;
+the WITHOUT arms produced prose describing their decisions. The outputs were equally good and
+only one was checkable — a reviewer can diff a record against the patch in seconds, but has to
+redo the work to audit the prose.
+
+So two of the three parts of this release stand on their own without the eval: the rot-prone
+shape was **verifiably absent** from C10 and from the implementer (grep across 0.6.0 for "rot",
+"payload", "field shape" returns nothing), and the `nit` routing was **verifiably sending
+comment findings to a list nobody actions**. Both are defects in the documents, readable
+directly. The third part — that the enumeration improves what gets written — is **not
+established**, is recorded as such in both result files, and wants a 3-run re-test and a
+multi-file fixture before anyone claims it.
+
 ## [0.6.0] - 2026-09-11
 
 **Verify this release by:** the next `PLAN.md` fledge produces containing a `## Landing plan` table
