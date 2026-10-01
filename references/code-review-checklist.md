@@ -67,7 +67,20 @@ The plan's `## Landing plan` says how many times this phase reaches `main`. Revi
 - Mocking internal application code where a real fixture would work
 - `datetime.now()` / `time.time()` / `time.sleep()` instead of frozen clock
 - `random.choice(...)` / `uuid.uuid4()` instead of `faker.uuid4()` and seeded fakers
-- Multi-condition guards where another condition independently produces the same observable result (tautological tests). Mutation-test mentally: would this test fail if the line under test were inverted? If not, the test is bad.
+- Multi-condition guards where another condition independently produces the same observable
+  result (tautological tests). **Mutation-test it for real — don't do it in your head.** Invert
+  or hardcode the line under test, run the suite, and watch it go red. "I thought about whether
+  this test would catch it" is the same move as "I glanced over the comments": a procedure
+  downgraded to a disposition, and it fails for the same reason.
+
+  The evidence that the mental version doesn't work is in this file's own history: **six of the
+  seven findings in this class during the June–September 2026 window came from the review bot**,
+  not from a human reviewer and not from an agent review. Everyone was applying the mental test.
+  The bot was the only party actually running the code. Note the asymmetry with C10 before
+  arguing cost: a comment finding is fixed by deleting a line, so it blocks; a mutation test
+  costs a real run, so this is a *demand for evidence in the review*, not a blocking severity —
+  if the author can't say which mutation they ran and what went red, treat the guarantee as
+  unproven and say so in the finding.
 - **Tests that prove the framework, not the guarantee.** The mental mutation test above is routinely applied to business logic and routinely skipped on three shapes where it matters most. For each, name what you would delete and confirm the test goes red:
   - **Database-level defaults.** A test that calls `Model.objects.create()` supplies the field value from the Python-level `default=`, so it passes with the migration's `db_default` / raw-SQL `DEFAULT` removed entirely. If the claim is "the database supplies this," the test must insert while *omitting the column* (raw SQL or a `.objects.raw()` insert) or inspect the column default in the catalog.
   - **CLI / management-command flag matrices.** A command with `--channel email|sms|all` tested only on the default branch will pass with the other branches wired wrong. Every branch of every flag that selects *what gets written* needs its own case.
@@ -109,7 +122,9 @@ Runtime checks that should be schema-level. Prefer `Literal[...]`, `Annotated[st
   - Joining through reverse one-to-many relations (`parent__children__field`) without thinking about how many rows the join produces.
 
 ### C8. Cleanup gaps
-- Stale LLM comments ("// updated to fix bug", openspec recommendations, "removed X" markers)
+- **Comments — see C10, and don't re-adjudicate them here.** This item used to carry "stale LLM
+  comments". C10 now covers every comment the diff adds, under a stricter standard and with a
+  severity that isn't `nit`. Two items owning the same lines means the weaker one gets cited.
 - Leftover screenshots, debug print statements
 - IMPLEMENTATION.md / PR description doesn't match the actual diff (Copilot catches this constantly — get there first)
 - **Defensive code for scenarios the type system / queryset / model invariants make unreachable.** If the project `CLAUDE.md` says "trust framework guarantees, only validate at system boundaries" (most do), guards like `if foo is None: return None` for a foo whose queryset filter excludes None are dead code — coverage CI will reject them, and they invite future maintainers to think the case can happen. Reviewers (especially the adversarial pass) should **NOT** recommend adding such guards. If you must, also require a test that exercises the guard — otherwise drop it. Pyright-narrowing `assert foo is not None` lines are fine because they execute on every call.
@@ -120,23 +135,74 @@ Run the full security section of the project `CLAUDE.md`, line by line, against 
 New write endpoints need one extra pass: **does this reuse an auth/permission class scoped for reading?** A read-scoped auth class attached to a route that sends, charges, or dispatches grants the send to everyone who can view. Reusing the class is a finding unless the PR says why read access is the correct bar for this write.
 
 ### C10. Comment altitude
-Comments should carry non-obvious constraints. They should not carry the diff, the changelog, or the reasoning that belongs in the PR description. All three are findings:
+**Read `comment-pass.md` and run its procedure against the diff.** That file is the standard;
+this item is the review of it. Don't review comments by impression — enumerate them:
 
-- **Comments that restate the code.** If the line below says what the comment says, delete the comment.
-- **Comments that narrate the change.** "the deleted `ChannelTabsRow` used to own this", "updated to fix the null case", "moved here from X" — this is commit-message and PR-description content. In the source it goes stale the moment anything moves, and it reads as history to someone who never saw the before state.
-- **Comments carrying design rationale at essay length.** Good PR-description material, wrong home. Keep the one sentence naming the constraint; move the rest.
+```bash
+grep -nE '^\+\s*(#|//|/\*|\*|<!--)' .fledge/phases/<id>/REVIEW-PACKAGE.patch
+```
 
-Keep: why a non-obvious bound was chosen, which invariant makes an apparently-unsafe line safe, a link to the ticket for a deliberate deviation.
+Run it against the saved patch, not a live `git diff` — that is the whole point of
+`review-package-format.md`, and it is what keeps the constructive and adversarial rounds
+arguing about the same set of lines.
+
+Every line that prints is either a keep under one of `comment-pass.md`'s four exceptions —
+non-obvious bound, the invariant making an unsafe-looking line safe, `TODO(TICKET-ID)`, an
+external constraint the code can't express — or it is a finding. There is no "harmless"
+verdict; a comment that is merely harmless has not met the burden of proof.
+
+The shapes, in the order they are missed:
+
+- **Pins current behavior.** The one the other rules miss, because it reads as documentation:
+  a field's current values, a payload or response shape, what another file does, a count or a
+  timing. **The test: could this line become false without anyone editing it?** If yes, it is
+  a finding. Nothing fails when the enum gains a member — the comment just quietly starts
+  lying, and the next reader believes it.
+- **Restates the code.** If the line below says what the comment says, it is duplication with
+  nothing holding the two halves together.
+- **Narrates the change.** "the deleted `ChannelTabsRow` used to own this", "updated to fix
+  the null case", "moved here from X" — commit-message and PR-description content. In the
+  source it goes stale the moment anything moves, and it reads as history to someone who
+  never saw the before state.
+- **Design rationale at essay length.** Good PR-description material, wrong home. Keep the
+  one sentence naming the constraint; move the rest.
+- **A future-work callout with no ticket.** A bare `TODO:` / `FIXME:` is a finding; the form
+  is `TODO(TICKET-ID):`.
+- **Commented-out code**, in any quantity.
+
+**Severity.** These are not nits — see the explicit carve-out in `severity-rubric.md`. A
+comment that contradicts the code *today* is a **major** defect on the same footing as C11
+user-facing copy: it is wrong information that a reader will act on. The rot-prone, restating,
+narrating and essay shapes are **minor / consequential = yes** — they violate a standing rule
+in the user's working agreements, and the fix is a deletion, so there is no cost argument for
+deferring them.
+
+**Also check the pass happened.** `IMPLEMENTATION.md` must carry a `## Comment pass` section
+with counts and one line per surviving comment naming its exception. Counts that don't match
+the diff, or survivors with no named exception, are a finding in their own right — the pass
+was signed off without being run.
+
+**Do not over-correct.** Demanding the deletion of a genuine keep is also a finding against the
+reviewer. The rule is a judgment, not a purge: the `# 200 is the provider's page cap` note and
+the `# safe to index [0] — the filter above excludes empty sets` note both stay.
 
 ### C11. User-facing copy follows behaviour
 When a matching rule, channel, condition, or unit changes, the strings describing it usually don't — nothing type-checks prose. Whenever the diff changes *what* something matches on or *when* something fires, grep the touched feature for:
 
 - tooltips, labels, empty states, toasts, `aria-label`s
 - i18n keys and their default values
-- docstrings and type-hint comments on the changed function
-- the PR description itself, against the final diff
+- docstrings and type-hint comments on the changed function — **these are C10's, not this
+  item's.** The grep finds them here; score them there, so one line has one owner.
+- the PR description itself, against the final diff — **C8's**, and non-blocking
 
-A feature that now matches on email address while its tooltip still reads "Automatically linked via matching phone number" is a user-visible defect, not a nit.
+A feature that now matches on email address while its tooltip still reads "Automatically linked
+via matching phone number" is a user-visible defect, not a nit — and that is now in the rubric
+rather than asserted here. See `severity-rubric.md`: a contradictory user-facing string is
+**major / consequential = yes**, as is a contradictory `aria-label`, which gets its own row
+because its reader has no fallback — a sighted user can see the button disagrees with the
+tooltip, a screen-reader user is simply told the wrong thing. The fix is editing a string, so
+the usual cost argument for deferring doesn't apply. The one exception is i18n: correcting the
+source value blocks, re-translating the remaining locales is a tracked follow-up that doesn't.
 
 ### C12. YAGNI — machinery without a caller
 For every new abstraction, cache, memo, parameter, hook, or config knob: **does it have a caller in this diff?**

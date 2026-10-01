@@ -47,7 +47,8 @@ Fledge maintains its own skill library. These are not pipeline stages — they k
 
 ## Shared references
 
-- `references/severity-rubric.md` — critical/major/minor/nit + consequential y/n rubric
+- `references/severity-rubric.md` — critical/major/minor/nit + consequential y/n rubric, incl. the C10 carve-out
+- `references/comment-pass.md` — enumerate the diff's comments and adjudicate each; run by the implementer, checked by review as C10
 - `references/context-budget.md` — 50% warn / 70% stop protocol
 - `references/source-manifest-format.md` — `.fledge/SOURCES.md` format
 - `references/sot-snapshot.md` — one fetch per review cycle, all personas read the snapshot

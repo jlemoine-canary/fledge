@@ -29,6 +29,14 @@ evidence the skill works. No delta means no skill.
   the rule from one arm into the other.
 - **Don't coach the WITHOUT arm.** It must be allowed to fail naturally — that failure is
   the whole point of RED.
+- **The WITHOUT arm is not a blank slate — say what it already knows.** Subagents inherit the
+  session's global `CLAUDE.md`, and through it `~/.claude/shared/working-agreements.md`. So an
+  arm run without the skill may still hold a weaker written form of the same rule, and in the
+  2026-10-01 comment-pass runs both WITHOUT arms cited the working agreements by name. That is
+  often the *right* comparison — "the rule as already written" vs. "the rule as a procedure" is
+  exactly the question when a standard exists and is being ignored — but it is a different claim
+  from "rule vs. no rule", and a result that doesn't name which one it measured will be read as
+  the stronger one. Name it in the result file.
 - **Stochasticity is real.** Subagent output varies run to run. For a borderline result,
   run each arm 2–3 times and report the spread rather than a single sample.
 
@@ -74,3 +82,15 @@ trusting any result from it.
   add a fixture so the failure can't silently return.
 - Never report a delta you didn't observe. A run that couldn't complete is an
   underspecified fixture, not a pass or a fail.
+- **A fixture that the baseline passes has told you something — write it down and keep it.**
+  The outcome table says "sharpen the scenario, or question whether the skill earns its
+  context", and both are real options, but a third is common: the fixture is measuring a
+  different stage than the one that fails. `comment-altitude-pass` measures whether the
+  *backstop* can tell a keep from a delete; the reported failure was at write time. Keep such a
+  fixture as a regression test for the stage it does cover, and say in its result file that it
+  is not evidence for the change that prompted it.
+- **When the pass criteria don't move, check whether anything else did.** The comment-pass WITH
+  arms produced counts and a per-comment verdict where the WITHOUT arms produced prose: equally
+  good code, and only one version a reviewer can check without redoing the work. Auditability,
+  determinism and hand-off quality are real deltas that no code-shaped criterion will catch.
+  Report them as what they are rather than promoting them into a pass.

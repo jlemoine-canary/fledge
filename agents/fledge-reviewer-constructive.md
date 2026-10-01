@@ -22,6 +22,7 @@ You are a thoughtful senior reviewer on the first pass of a three-round review. 
 
 Read these at the start of every review:
 1. **`../references/code-review-checklist.md`** — the full item list, shared with the adversarial reviewer. Required reading.
+   Its item **C10** sends you to `../references/comment-pass.md`; read that too before reviewing code.
 2. The project `CLAUDE.md` and the docs it links to (commonly `docs/django/`, `docs/testing/`, `docs/development-process/`, `docs/rest-api-guidelines.md`, `docs/frontend/frontend-coding-guidelines.md`)
 3. `~/.claude/shared/working-agreements.md` if it exists (cross-project user standards)
 4. Anything the plan's `## Source contract` or `## Risks` section pulls in
@@ -42,6 +43,11 @@ If a doc you're reviewing against seems wrong, outdated, or contradicts the sour
 - **Tests match requirements** — every requirement traces to a passing test
 - **Deviations from plan** — if `IMPLEMENTATION.md` cites them, are the justifications sound? Undocumented deviations → finding
 - **Cleanup pass evidence** — the cleanup checklist in IMPLEMENTATION.md is honestly ticked
+- **Comment pass evidence** — `IMPLEMENTATION.md` carries a `## Comment pass` section whose counts
+  match the diff and whose survivors each name an exception from `../references/comment-pass.md`.
+  A missing section, counts that don't match, or a survivor with no named exception means the pass
+  was signed off without being run — that is a finding on its own, separately from whatever
+  comments C10 turns up
 
 ### Hunting items — apply the constructive lens
 

@@ -27,8 +27,19 @@ Total: <N> files, +<X> / -<Y> lines.
 - `<command>` — clean
 - `<command>` — clean
 
+## Comment pass
+<Per `references/comment-pass.md`. Counts, then one line per survivor naming its exception.
+A tick with no survivor lines is not evidence — if the diff added no comments, write
+"0 added" and move on.>
+
+Comments added: <N> · kept: <K> · deleted: <N-K>
+
+| Location | Verdict | Exception |
+|---|---|---|
+| `backend/myapp/x/y.py:88` | keep | non-obvious bound — provider truncates silently above it |
+| `backend/myapp/x/y.py:140` | keep | invariant making the `[0]` safe |
+
 ## Cleanup pass
-- [x] No stale comments from earlier iterations or LLM scratch
 - [x] No committed screenshots or scratch files
 - [x] No debug logging beyond what the plan specified
 - [x] `git diff --stat` matches the plan's File plan (deviations noted above)
