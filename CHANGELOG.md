@@ -66,6 +66,17 @@ cache didn't move.
 - `skills/fledge-implement/SKILL.md` step 3 — verify the `## Comment pass` counts against the
   diff before review. Cheap place to catch it, now that review blocks on it.
 - Both reviewer personas are pointed at `comment-pass.md` as required reading.
+- **`references/code-review-checklist.md` C1 — the mutation test is executable again.** The item
+  told reviewers to "mutation-test mentally", while its own sub-items demanded running the thing
+  and watching it go red. The disposition won, and the receipt is in the retro: **six of the
+  seven findings in this class in the June–September 2026 window came from the review bot** —
+  not a human, not an agent. Everyone was running the test in their head; the bot was running
+  the code. Unlike C10 this is *not* given a blocking severity, because a mutation run costs a
+  real run where a comment fix costs a deletion — it is a demand for evidence instead: if the
+  author can't name the mutation they ran and what went red, the guarantee is unproven.
+- **C8 no longer re-adjudicates comments.** It kept a "stale LLM comments" bullet that C10 now
+  covers under a stricter standard and a non-`nit` severity. Two items owning the same lines
+  means the weaker one gets cited, so C8 points at C10 and stops there.
 - `references/skill-eval-protocol.md` — three lessons from this release's own runs: WITHOUT arms
   inherit the working agreements, so name which comparison a result measured; a fixture the
   baseline passes is often measuring the wrong *stage*, and is worth keeping as a regression

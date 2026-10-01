@@ -67,7 +67,20 @@ The plan's `## Landing plan` says how many times this phase reaches `main`. Revi
 - Mocking internal application code where a real fixture would work
 - `datetime.now()` / `time.time()` / `time.sleep()` instead of frozen clock
 - `random.choice(...)` / `uuid.uuid4()` instead of `faker.uuid4()` and seeded fakers
-- Multi-condition guards where another condition independently produces the same observable result (tautological tests). Mutation-test mentally: would this test fail if the line under test were inverted? If not, the test is bad.
+- Multi-condition guards where another condition independently produces the same observable
+  result (tautological tests). **Mutation-test it for real — don't do it in your head.** Invert
+  or hardcode the line under test, run the suite, and watch it go red. "I thought about whether
+  this test would catch it" is the same move as "I glanced over the comments": a procedure
+  downgraded to a disposition, and it fails for the same reason.
+
+  The evidence that the mental version doesn't work is in this file's own history: **six of the
+  seven findings in this class during the June–September 2026 window came from the review bot**,
+  not from a human reviewer and not from an agent review. Everyone was applying the mental test.
+  The bot was the only party actually running the code. Note the asymmetry with C10 before
+  arguing cost: a comment finding is fixed by deleting a line, so it blocks; a mutation test
+  costs a real run, so this is a *demand for evidence in the review*, not a blocking severity —
+  if the author can't say which mutation they ran and what went red, treat the guarantee as
+  unproven and say so in the finding.
 - **Tests that prove the framework, not the guarantee.** The mental mutation test above is routinely applied to business logic and routinely skipped on three shapes where it matters most. For each, name what you would delete and confirm the test goes red:
   - **Database-level defaults.** A test that calls `Model.objects.create()` supplies the field value from the Python-level `default=`, so it passes with the migration's `db_default` / raw-SQL `DEFAULT` removed entirely. If the claim is "the database supplies this," the test must insert while *omitting the column* (raw SQL or a `.objects.raw()` insert) or inspect the column default in the catalog.
   - **CLI / management-command flag matrices.** A command with `--channel email|sms|all` tested only on the default branch will pass with the other branches wired wrong. Every branch of every flag that selects *what gets written* needs its own case.
@@ -109,7 +122,9 @@ Runtime checks that should be schema-level. Prefer `Literal[...]`, `Annotated[st
   - Joining through reverse one-to-many relations (`parent__children__field`) without thinking about how many rows the join produces.
 
 ### C8. Cleanup gaps
-- Stale LLM comments ("// updated to fix bug", openspec recommendations, "removed X" markers)
+- **Comments — see C10, and don't re-adjudicate them here.** This item used to carry "stale LLM
+  comments". C10 now covers every comment the diff adds, under a stricter standard and with a
+  severity that isn't `nit`. Two items owning the same lines means the weaker one gets cited.
 - Leftover screenshots, debug print statements
 - IMPLEMENTATION.md / PR description doesn't match the actual diff (Copilot catches this constantly — get there first)
 - **Defensive code for scenarios the type system / queryset / model invariants make unreachable.** If the project `CLAUDE.md` says "trust framework guarantees, only validate at system boundaries" (most do), guards like `if foo is None: return None` for a foo whose queryset filter excludes None are dead code — coverage CI will reject them, and they invite future maintainers to think the case can happen. Reviewers (especially the adversarial pass) should **NOT** recommend adding such guards. If you must, also require a test that exercises the guard — otherwise drop it. Pyright-narrowing `assert foo is not None` lines are fine because they execute on every call.
