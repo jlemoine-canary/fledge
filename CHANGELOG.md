@@ -66,6 +66,11 @@ cache didn't move.
 - `skills/fledge-implement/SKILL.md` step 3 — verify the `## Comment pass` counts against the
   diff before review. Cheap place to catch it, now that review blocks on it.
 - Both reviewer personas are pointed at `comment-pass.md` as required reading.
+- `references/skill-eval-protocol.md` — three lessons from this release's own runs: WITHOUT arms
+  inherit the working agreements, so name which comparison a result measured; a fixture the
+  baseline passes is often measuring the wrong *stage*, and is worth keeping as a regression
+  test for the stage it does cover; and when the pass criteria don't move, check whether
+  auditability or determinism did, and report that as what it is rather than promoting it.
 
 ### Evidence
 
