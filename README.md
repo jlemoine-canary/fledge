@@ -19,7 +19,7 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 |---|---|
 | `/fledge` | Top-level orchestrator — runs the full pipeline with checkpoints |
 | `/fledge-auth` | Verify MCP connections (Notion, Linear, GitHub, Figma, Playwright) |
-| `/fledge-ingest` | Fetch and index source docs; set source-of-truth. `--append` to add to an existing project. |
+| `/fledge-ingest` | Fetch and index source docs, search Slack/Notion/Linear for prior design work, and set the source-of-truth. `--append` to add to an existing project. |
 | `/fledge-plan` | Staff-engineer plan for a phase (may split into one level of sub-phases) |
 | `/fledge-review` | Three-round review on a plan or implementation. Pass mode `plan` or `code`. |
 | `/fledge-test` | Write failing tests (TDD red) |
@@ -47,13 +47,13 @@ Fledge maintains its own skill library. These are not pipeline stages — they k
 
 ## Shared references
 
-- `references/severity-rubric.md` — critical/major/minor/nit + consequential y/n rubric, incl. the C10 carve-out
+- `references/severity-rubric.md` — critical/major/minor/nit + consequential y/n rubric, incl. the C10/C11 carve-outs and P12 naming
 - `references/comment-pass.md` — enumerate the diff's comments and adjudicate each; run by the implementer, checked by review as C10
 - `references/context-budget.md` — 50% warn / 70% stop protocol
-- `references/source-manifest-format.md` — `.fledge/SOURCES.md` format
+- `references/source-manifest-format.md` — `.fledge/SOURCES.md` format, incl. `kind: prior-work` entries and the `## Prior-work search` record
 - `references/sot-snapshot.md` — one fetch per review cycle, all personas read the snapshot
 - `references/checkpoint-protocol.md` — orchestrator-owned checkpoint mechanics
-- `references/templates/plan.md` — the `PLAN.md` shape, incl. `## Landing plan` (how the phase reaches `main`)
+- `references/templates/plan.md` — the `PLAN.md` shape, incl. `## State changes and names` (settled before the migration unit) and `## Landing plan` (how the phase reaches `main`)
 - `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
 - `references/review-package-format.md` — deterministic code-mode change-set bundle (`REVIEW-PACKAGE.md`) the reviewers consume
 - `references/task-brief-format.md` — deterministic minimal brief (`TASK-BRIEF.md`) the implementer consumes

@@ -94,6 +94,18 @@ Not C11's: the **PR description** against the final diff. C11's grep list includ
 that is when you notice, but the description is not copy a user reads — it stays with C8 and
 stays non-blocking.
 
+## P12 — names in a plan are not `nit`s
+
+`nit` covers naming with no material impact. A new field, model or flag name in a plan is the
+opposite case: settled now it costs an edit, and changed after the migration lands it costs a
+rename through every PR stacked on it.
+
+| Shape | Severity | Consequential |
+|---|---|---|
+| Gate, owner or suppression logic with a state change missing or its outcome unstated | major | yes |
+| New field, model or flag name not settled in the plan before the migration unit | minor | yes |
+| Wording of a name the plan *has* settled | nit | no |
+
 ## Format (for REVIEW-*.md files)
 
 ```markdown
