@@ -13,6 +13,8 @@ If the SoT is ambiguous on a consequential point and the plan picked a direction
 
 The highest-cost shape of this is **"add a new X" vs "change the existing X"** — a new merge tag vs. redefining the existing one, a new field vs. widening the current one, a new endpoint vs. extending the old one. The two readings produce working code either way, so nothing downstream catches it; it surfaces weeks later as a revert. When the SoT admits both readings, that is always an `Open questions` entry, never a silent pick.
 
+**A SoT that disagrees with the ticket is the same finding.** When the SoT disagrees with the ticket or project description, or was last edited before the ticket's design changed, the plan records it under `Open questions` instead of trusting either side; `sot: true` says which source wins a conflict, not which is current (manifest rule 4). Back-to-back reservations' Notion design doc stopped at Aug 31 while the Linear description became the real source.
+
 ### P2. Coverage gaps masked by wording
 Requirements may look covered because phrasing overlaps, even though the plan doesn't actually address them. Trace each requirement to a specific plan item; mismatches are findings.
 
@@ -56,6 +58,13 @@ The plan's `## Landing plan` says how many times this phase reaches `main`. Revi
 - **A single landing unit needs a reason, and "it's all one feature" isn't one.** Look for the seams the plan passed over: a behavior-neutral move bundled with the change that motivated it, a migration riding along with the code that reads it, a backend and frontend half that could ship a day apart, a piece with no caller in this phase. Each is an independent revert boundary that was given up.
 - **Check the split is real.** Every `File plan` row names a unit, no row appears under two, and each unit's `Depends on` forms an order you could actually land in. A unit that can't be merged without a later one isn't a unit.
 - **Don't reward fragmentation either.** Units that must land together within the hour to keep `main` working are one PR with extra ceremony. The test is whether each can sit on `main` on its own.
+
+### P12. State changes and domain names
+Settle state changes and names at design time. For any gate, owner, or suppression logic, the plan's `## State changes and names` lists each state change and its outcome: the owner sends, the owner becomes ineligible, the group splits or grows. New domain terms (field, model and flag names) are settled there before the migration landing unit. Back-to-back reservations found its owner-already-sent leak and its `b2b_owner` → `back_to_back_reservation_owner` rename in code review, after other PRs were stacked on both.
+
+- **A missing transition is a finding.** Check for the three that are always missed: the owner acts and *then* becomes ineligible (whatever it suppressed stays suppressed); the group splits; the group grows after the gate already decided. A row whose outcome is "recompute" without saying what the other members end up with is missing too.
+- **A name the plan didn't settle is a finding.** Every new field, model or flag in the `File plan` appears in the names table with its meaning, and the migration unit uses those names. An abbreviation a reader could take for something else counts as unsettled.
+- **Not a `nit`.** Scored in `severity-rubric.md` § P12: an unsettled name is `minor / consequential = yes`, because a rename after the migration lands runs through every stacked PR.
 
 ---
 

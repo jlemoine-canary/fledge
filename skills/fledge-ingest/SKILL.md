@@ -43,9 +43,20 @@ If a fetch fails:
 - Not found / permission denied → ask user to double-check the reference
 - Rate limit → back off and retry once
 
-### 3. Ask which is the source-of-truth
+### 3. Search for prior design work (fresh ingest)
+The supplied sources are what the user thought to hand over, not everything that exists. Before the manifest is final, search for earlier investigations of the same problem: design notes, abandoned or canceled tickets, triage threads. Back-to-back reservations spent its first week on a narrower design than the one a teammate had written up a month earlier, and no supplied source linked to it.
 
-**Fresh ingest**: use `AskUserQuestion` with exactly one of the parsed sources as options. Required — there is always one SoT.
+- Derive 2–4 search terms from the supplied sources' problem statement: the domain noun and the symptom ("consecutive stays", "duplicate message"), not only the project's own name or abbreviation.
+- Search **all three** surfaces: Slack, Notion (`notion-search`) and Linear (issue search, including canceled and done issues). A surface you can't reach is recorded as not searched, with the reason. Never skip one silently.
+- Open each plausible hit. Add a hit that discusses the same problem (a design, an attempt, a reason something failed) as a non-SoT entry with `kind: prior-work`, and say in its `notes` what it proposes or why it failed. Skip hits that only share a keyword.
+- Never make prior work the SoT on your own. If it contradicts the SoT, say so in its `notes`; the planner deals with it.
+- Record the terms and per-surface results in the manifest's `## Prior-work search` section, including when nothing turned up.
+
+**Append mode** skips this step unless the user asks for it.
+
+### 4. Ask which is the source-of-truth
+
+**Fresh ingest**: use `AskUserQuestion` with the parsed sources as options (the ones the user supplied, never prior work); the user picks exactly one. Required — there is always one SoT.
 
 **Append mode**: for each new source, ask:
 > This is a new source. Should it become the source-of-truth?
@@ -56,17 +67,18 @@ If a fetch fails:
 If SoT changes mid-project, warn:
 > ⚠ Source-of-truth changed after planning began. Existing plans may need re-review against the new SoT. Run `/fledge:fledge-review plan` on any active plan.
 
-### 4. Write `.fledge/SOURCES.md`
+### 5. Write `.fledge/SOURCES.md`
 
 Use the format in `../../references/source-manifest-format.md`. Include a short `Last updated` ISO date.
 
 **Fresh ingest**: scaffold the file from scratch.
 **Append mode**: append new `S<N>` entries (next available id); flip the old SoT to `sot: false` if a new one was promoted; bump `Last updated`.
 
-### 5. Summarize back to the user
+### 6. Summarize back to the user
 
 ```
 ✓ <Ingested | Appended> N sources. Source-of-truth: <title> (<ref>) [<unchanged | promoted>].
+Prior work: <N added (S3, S4) | none found> — searched <Slack, Notion, Linear> for "<terms>".
 .fledge/SOURCES.md updated.
 Next: /fledge:fledge-plan to start planning, or /fledge:fledge-ingest --append to add more.
 ```
@@ -80,6 +92,7 @@ Source doc sizes can vary wildly. A single Notion page can be 40k tokens; a Figm
 
 ## Tools needed
 - `mcp__notion__notion-fetch`, `mcp__notion__notion-search`
+- A Slack search tool (e.g. `slack_search_public_and_private`), for the prior-work search
 - `mcp__linear-server__get_issue`, `_project`, `_document`, `_list_*`
 - Bash (for `gh issue view`, `gh pr view`)
 - `mcp__figma__get_metadata` (schema validation without full content pull)

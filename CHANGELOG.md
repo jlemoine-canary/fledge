@@ -5,6 +5,65 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-10-14
+
+From the back-to-back reservations retro (2026-10-14). That project ran about 5.4 weeks against a
+2-week slot. A teammate's design notes from a month before it started already held the final
+design, and the owner-already-sent leak and the `b2b_owner` rename were both found in code review,
+after PRs had been stacked on them.
+
+**Verify this release by:** the next `.fledge/SOURCES.md` fledge writes on a fresh ingest carrying a
+`## Prior-work search` section that lists the terms searched and a result per surface (Slack,
+Notion, Linear), and the next `PLAN.md` for a gate or owner change carrying a
+`## State changes and names` section with a names table. A manifest with no search record means
+the cache didn't move.
+
+### Added
+
+- **Prior-design search in `fledge-ingest`** (new step 3, fresh ingest only). Before the manifest is
+  final, ingest searches Slack, Notion and Linear for earlier investigations of the same problem:
+  design notes, canceled tickets, triage threads. It adds each relevant hit as a non-SoT entry with
+  `kind: prior-work`. A surface it can't reach is recorded as not searched, never skipped silently.
+  Prior work is never made the SoT on ingest's own initiative.
+- **`kind: prior-work`, `slack-thread` and `## Prior-work search`** in
+  `references/source-manifest-format.md`. A new rule 5 says prior-work entries are context, not
+  requirements, and a plan that departs from one says why. The planner now reads them.
+- **`## State changes and names` in the plan template.** For any gate, owner or suppression logic,
+  one row per state change with its outcome, always including three cases: the owner acts and then
+  becomes ineligible, the group splits, and the group grows after the gate decided. It also has a
+  names table for every new field, model, flag and record name, settled before the migration
+  landing unit.
+- **`P12. State changes and domain names`** in `references/code-review-checklist.md`. A missing
+  transition or an unsettled name is a finding. `references/severity-rubric.md` scores both
+  (§ P12): a missing transition is `major`, an unsettled name `minor`, and both are
+  `consequential = yes`. The rubric's `nit` covers naming with no material impact, and a name
+  frozen by a migration is the opposite case. P12 mirrors the working agreement *Settle state changes and names at design time*,
+  and the two change together.
+- **Four eval fixtures:** `fledge-ingest/prior-design-search`, `fledge-plan/state-changes-and-naming`,
+  `fledge-plan/stale-sot` (baseline only) and `fledge-review/stale-sot-and-state-gaps` (three pairs,
+  with and without the working agreements).
+
+### Changed
+
+- **P1 and manifest rule 4: a SoT that disagrees with the ticket.** Rule 4 said non-SoT
+  divergences "are logged but do not block". It now carves out a SoT that disagrees with the ticket
+  or project description, or that was last edited before the ticket's design changed: neither side
+  wins, and it goes under `Open questions`. P1 says the same in two sentences. **No RED failure
+  reproduced for this.** In four baseline runs (three reviewers and one planner), the 0.7.0 agents
+  all raised the conflict, and one reviewer had to argue its way past rule 4 to do it. The change
+  removes that contradiction and is otherwise unproven.
+- Reviewer personas list P12 (`P1–P12`).
+
+### Eval evidence
+
+| Fixture | WITHOUT | WITH | What moved |
+|---|---|---|---|
+| `fledge-ingest/prior-design-search` | 1/6 | 6/6 | Searching at all. The 0.7.0 arm said no step used the search tools it had. |
+| `fledge-plan/state-changes-and-naming` (2 runs/arm) | 3/5, 3.5/5 | 5/5, 5/5 | Names table and naming decision. State changes already came from the working agreement. |
+| `fledge-review/stale-sot-and-state-gaps`, no working agreements | 4/5 | 5/5 | Naming finding (P12) |
+| same, subtle variant | 4/5 | 5/5 | Naming finding (P12) |
+| same, working agreements present | 5/5 | 5/5 | Nothing: the working agreement already carries it |
+
 ## [0.7.0] - 2026-10-01
 
 **Verify this release by:** the next `IMPLEMENTATION.md` fledge produces carrying a

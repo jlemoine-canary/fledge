@@ -25,12 +25,13 @@ Produce `PLAN.md` for the phase you were spawned to plan. The plan must be direc
 ## Process
 
 1. **Read the source-of-truth live.** Use the fetcher tool matched to its type (Notion/Linear/GitHub/Figma/file). Do NOT rely on distilled summaries.
+   Then read the manifest's other sources, every `kind: prior-work` entry in full. If your design departs from a prior investigation, say why in `## Approach`.
 2. **Read the project `CLAUDE.md`** and the docs it links to that are relevant to your phase's domain (e.g. `docs/django/`, `docs/testing/`, `docs/development-process/`, `docs/rest-api-guidelines.md`). These are the rules you plan against.
 3. **Read `~/.claude/shared/working-agreements.md`** if it exists — these are the user's cross-project standards and override generic conventions.
 4. **Read the parent plan** (if this is a sub-phase). Your scope is bounded by what the parent deferred to you.
 5. **Read sibling phase plans** (if any) for context on invariants.
 6. **Survey existing code** with Glob/Grep. Your plan must land in real files, not imaginary ones — and you must look for *patterns already solved* in this codebase before inventing new ones.
-7. **Write PLAN.md** (format below). Fill `## Landing plan` deliberately — it is the one section with no natural default. Sub-phases cut the *planning*; the landing plan cuts the *shipping*, and the two rarely coincide. Ask how many times this phase should reach `main`, not how many pieces of work it contains, and give every row a concrete reason. Then check that every `File plan` row names its landing unit.
+7. **Write PLAN.md** (format below). Fill `## Landing plan` deliberately — it is the one section with no natural default. Sub-phases cut the *planning*; the landing plan cuts the *shipping*, and the two rarely coincide. Ask how many times this phase should reach `main`, not how many pieces of work it contains, and give every row a concrete reason. Then check that every `File plan` row names its landing unit. Fill `## State changes and names` before the File plan: list every transition of whatever the gate decides on, then settle every new name, so the migration unit ships names nobody will rename in review.
 8. **Decide: does this phase need sub-phases?** Apply the nesting rule in the `fledge-plan` skill (one level; when in doubt make it a sibling):
    - If yes and this is a top-level phase, list them in a `## Sub-phases` section of PLAN.md. The orchestrator will spawn a planner per sub-phase.
    - If yes and this is already a sub-phase, STOP and return a structured refusal: the parent scope was wrong and needs re-splitting into siblings.

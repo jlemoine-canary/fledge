@@ -25,6 +25,28 @@ no UI and no externally-reachable service surface.>
 ## Approach
 <2–5 paragraphs, staff-engineer level. What's the shape? What's the key invariant? What's the risky edge?>
 
+## State changes and names
+Required when the phase adds a gate, an owner, or suppression logic, or introduces a new field,
+model, flag or record name. Otherwise "None." Settle both here, before the migration landing unit:
+a missed transition found in code review becomes a follow-up PR, and a name changed after the
+migration is a rename carried through every PR stacked on it.
+
+**State changes.** One row per change to whatever the gate decides on, with what happens to
+everything else. Always cover: the owner acts (sends, writes) and *then* becomes ineligible; the
+group splits; the group grows after the gate has already decided.
+
+| State change | Example trigger | Outcome |
+|---|---|---|
+| Owner acts, then becomes ineligible | Folio's primary guest is emailed the invoice, then removed from the folio | Other guests were suppressed and stay suppressed; the new primary isn't sent it again |
+| Group grows after the decision | Guest added to the folio after the invoice went out | No resend; the new guest sees it in the portal |
+
+**Names.** Every new field, model, flag and record name in the File plan, with its meaning. Spell
+out abbreviations a reader could take for something else.
+
+| Name | Kind | Meaning |
+|---|---|---|
+| `folio_primary_guest` | FK on `Folio` | The guest who receives the folio's invoice email |
+
 ## Reuse vs novelty
 For each major piece of work, name an existing pattern/utility/component you considered:
 
