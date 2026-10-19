@@ -13,6 +13,17 @@ auth → ingest → plan → review(plan) → test → implement → review(code
 
 Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 
+Small tickets take the short path instead:
+
+```
+pre-flight → fetch SoT → plan (written inline) → test → implement → review(adversarial ×1)
+          → mutation check → verify + commit → (checkpoint)
+```
+
+`/fledge-lite` is the same pipeline with the planner, implementer, ingest manifest, plan review
+and plan checkpoint removed — one subagent, one checkpoint. It trips back to `/fledge --from=plan`
+on a migration, a risk-level-5 system, a second surface, a growing plan, or seven other wires.
+
 ## Skills
 
 | Skill | Purpose |
@@ -25,6 +36,7 @@ Both checkpoints are owned by the orchestrator. Sub-skills return verdicts.
 | `/fledge-test` | Write failing tests (TDD red) |
 | `/fledge-implement` | Senior-engineer TDD iteration until tests pass |
 | `/fledge-qa` | Surface-aware QA — browser flows for UI, API + side-effect checks for backend, justified skip for pure library/CLI. Iterates until the implementation matches requirements. |
+| `/fledge-lite` | Small-ticket path — one source, one surface, localized fix. Orchestrator-written plan, one adversarial review round, mandatory mutation check, one checkpoint. Escalates to `/fledge` on any trip-wire. |
 
 ## Meta-skills
 

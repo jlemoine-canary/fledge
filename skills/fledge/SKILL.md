@@ -19,6 +19,11 @@ All other stages run autonomously (subject to context-budget escalations).
 ## When NOT to run
 - User only wants one stage — they should invoke that stage directly (`/fledge:fledge-plan`, `/fledge:fledge-review code`, etc.)
 - Project has active unresolved escalations — resolve first, then resume
+- **The ticket is small** — one source of truth, one service/surface, a localized fix of roughly
+  ≤5 change bullets / ≤200 lines. For small tickets, see `/fledge:fledge-lite`: the same pipeline
+  with the planner, the implementer, the ingest manifest, the plan review and the plan checkpoint
+  removed, and trip-wires that hand back here (`--from=plan`) the moment the work outgrows it.
+  When it's a close call, run the full pipeline.
 
 ## Arguments
 
@@ -144,4 +149,5 @@ The escalation checkpoint has 3 options:
 
 ## Related
 - Sub-skills: `/fledge:fledge-auth`, `/fledge:fledge-ingest` (with `--append`), `/fledge:fledge-plan`, `/fledge:fledge-review` (plan|code), `/fledge:fledge-test`, `/fledge:fledge-implement`, `/fledge:fledge-qa`
+- Small-ticket path: `/fledge:fledge-lite` (escalates back here with `--from=plan`)
 - References: `checkpoint-protocol.md`, `context-budget.md`, `severity-rubric.md`, `source-manifest-format.md`, `sot-snapshot.md`, `templates/`
