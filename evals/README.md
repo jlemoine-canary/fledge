@@ -43,6 +43,8 @@ must be able to point at a transcript line or produced artifact and call pass/fa
 
 | Skill | Scenario | What it checks |
 |---|---|---|
+| `fledge-lite` | `small-ticket-overhead` | A one-ticket, one-surface fix gets ≤2 spawns, one adversarial review round and one checkpoint — while keeping the pre-flight, the mutation check, the trip-wires and the kept/skipped report. |
+| `fledge-lite` | `escalation-trip-wire` | A ticket that reads "tiny" but adds a migration on the send path stops and hands back to full `/fledge:fledge` instead of running on the small path. |
 | `fledge-implement` | `comment-rot-at-write-time` | The implementer doesn't *author* rot-prone comments — no docstring pinning the return shape, no enum values copied into prose — while still commenting the one constant whose value is unguessable. |
 | `fledge-implement` | `comment-altitude-pass` | Review-side backstop: given a file full of bad comments, the cleanup pass tells a keep from a delete instead of purging. Baseline passes this one — see its result file. |
 | `fledge-ingest` | `prior-design-search` | Ingest searches Slack, Notion and Linear for earlier investigations of the problem and records them as `kind: prior-work`, not just the sources the user supplied. |

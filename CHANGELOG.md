@@ -5,6 +5,74 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-10-19
+
+The full pipeline costs ~9 subagent spawns, two checkpoints and six review rounds. Run on a
+single-surface ~80-line frontend fix with one Linear ticket behind it (MSG-6639), that is mostly
+spend with nothing to work on: the planner writes four bullets and the integrator reconciles two
+reviews that agree. A hand-trimmed run of that ticket worked. This release encodes the trim.
+
+The baseline is recorded, not assumed: `evals/fledge-lite/small-ticket-overhead/result-2026-10-19-red.md`
+scores the 0.8.0 pipeline at **1 / 10** on that ticket — 9 spawns, 2 checkpoints, two three-round
+reviews, a `SOURCES.md` for one source, and no mutation step anywhere in 12 stages. The baseline
+run diagnosed itself, unprompted: *"the skills expose no lite path."*
+
+**Verify this release by:** a `## fledge-lite run report — <TICKET>` block at the end of the next
+small-ticket run, with its **Skipped, and what it would have caught** table naming the prior-work
+search, the planner and the plan checkpoint by name, and a `**Spawns:** 1. **Checkpoints:** 1.`
+line under it. Nothing in 0.8.0 can produce that block. A small-ticket run that ends without it
+means the cache didn't move.
+
+### Added
+
+- **`/fledge:fledge-lite`** — the small-ticket path. One source of truth fetched directly (no
+  `SOURCES.md`), the plan written by the orchestrator itself (no `fledge-planner`), the fix written
+  inline (no `fledge-implementer`), **one** `fledge-reviewer-adversarial` round briefed as the only
+  round, and **one** checkpoint — "Ship it?" — at the end. Total: 1 spawn, 1 checkpoint.
+- **A mandatory mutation check (step 7)**, which the full pipeline has no equivalent of as a step.
+  Break the fix 2–3 targeted ways — remove the guard, invert it, hardcode a threaded parameter —
+  and confirm a test goes red for each, restoring from a **file backup, not `git checkout`** (a
+  checkout would revert the tests written minutes earlier). A mutation no test catches is
+  **blocking**. Checklist `C1` scores the mutation check as a demand for evidence rather than a
+  blocking finding because running one costs a real run; by lite's step 7 that run has already
+  happened, so the cost argument is spent and severity-follows-cost gives blocking. Same rule,
+  different arithmetic — and with no integrator round, nobody downstream would demand the evidence.
+- **Ten escalation trip-wires**, checked before the plan is written and again every time the plan
+  changes: a second source or a conflict, a migration, a risk-level-5 system (scheduling/sending,
+  payments, auth, idempotency), a second service or surface, a plan past ~5 bullets / ~200 lines, a
+  new public contract, copy needing re-translation, a blocking finding needing redesign, tests that
+  won't go red for the right reason in 2 attempts, and context past 50%. Any one of them stops the
+  run and hands back to the full pipeline — `--from=plan` with the lite `PLAN.md` as the seed when
+  one exists, plain `/fledge:fledge` when the wire fired at the step-3 check and no plan has been
+  written yet, which is the common case. Escalation is stop-and-ask; continuing in lite mode
+  silently is never an option, and neither is writing a plan just to have a seed.
+- **`evals/fledge-lite/`** — two fixtures, both run (`result-2026-10-19-*.md`). The trim fixture
+  went **1/10 → 10/10**; the refusal fixture passed 5/5 on the WITH arm *and found a defect in the
+  skill* — the escalation offer assumed a `PLAN.md` that the step-3 check fires before writing —
+  which is fixed above. One honest caveat is recorded in that result: the baseline named four
+  trip-wires with no lite skill present, so the skill supplies the **gate**, not the knowledge. `small-ticket-overhead` measures the trim, with criteria
+  7–10 guarding what must survive it (pre-flight, mutation check, trip-wires, run report), so a
+  path that drops them scores as a fail rather than as cheaper. `escalation-trip-wire` measures the
+  refusal, on a ticket that reads "one guard plus a column" and is a migration on the send path
+  across two surfaces. Ticket content in both is synthetic.
+
+### Changed
+
+- **`skills/fledge/SKILL.md` — routing pointer only, no stage changes.** `## When NOT to run` gains
+  a small-ticket bullet pointing at `/fledge:fledge-lite`, and `## Related` lists it as the
+  small-ticket path. Close calls go to the full pipeline: over-spending on a small ticket costs
+  subagents, under-spending on a large one costs a defect in the send path.
+
+### Notes
+
+- `fledge-lite` adds **no new reference doc**. The rules it leans on already have owners —
+  `references/code-review-checklist.md` (C1, C10, P10), `references/comment-pass.md`,
+  `references/severity-rubric.md`, `references/review-package-format.md`,
+  `references/checkpoint-protocol.md` and `~/.claude/shared/working-agreements.md` — and the
+  reference rule is ≥2 consumers before a rule gets its own home. A third copy of a twin rule is
+  what the *Relocating a rule* and *Mirrored docs change together* agreements exist to prevent, so
+  the skill cites them and copies none of them.
+
 ## [0.8.0] - 2026-10-14
 
 From the back-to-back reservations retro (2026-10-14). That project ran about 5.4 weeks against a
