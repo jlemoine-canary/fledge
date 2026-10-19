@@ -5,6 +5,64 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-10-19
+
+0.9.0's own release verification — the first real `/fledge:fledge-lite` run, on Linear MSG-6641 —
+found that lite's single review round was being handed an **empty change set**. Lite's only commit
+is step 8; the review package is compiled at step 6 from `BASE..HEAD`. Two steps apart, so
+`BASE == HEAD`, and every command in the recipe returns nothing without raising anything:
+
+```
+BASE=48015e5b09a0…  HEAD=48015e5b09a0…
+$ git log --oneline BASE..HEAD     # (nothing)
+$ git diff --stat BASE HEAD        # (nothing)
+$ git status --short
+ M frontend/packages/shared/utilities/notification.ts
+?? frontend/packages/shared/utilities/notification.test.ts
+```
+
+With one round and no integrator, that is not a thinner review — it is no review, reported as a
+clean one. The same run then committed before step 6 and the single adversarial round returned
+**10 findings, 2 major**, each backed by a mutation it ran and watched survive. Both majors would
+have shipped against the empty package.
+
+Recorded as `evals/fledge-lite/review-package-empty/` — RED 0/5, GREEN 5/5.
+
+**Verify this release by:** a lite run's `.fledge/phases/<id>/REVIEW-PACKAGE.md` whose `## Commits`
+section **names a commit**, and a `.fledge/phases/<id>/.base-commit` file written at pre-flight. In
+0.9.0 that file is never created and the `## Commits` section is empty. If a lite run produces a
+`REVIEW-PACKAGE.md` with nothing under `## Commits`, the cache didn't move.
+
+### Fixed
+
+- **The review package is no longer empty.** `fledge-lite` step 1 now records
+  `.fledge/phases/<id>/.base-commit` (the full pipeline gets this from `/fledge:fledge-implement`,
+  which lite does not run), step 5 ends in a signed commit, and step 8 `--amend`s into it — so the
+  branch still ends with **one** commit. Step 6 now asserts `git log BASE..HEAD` is non-empty
+  before spawning the reviewer: the defect's whole character is that every command succeeds and
+  prints nothing, so only an explicit check catches it.
+- **`## Error handling` no longer misdirects.** "The reviewer returns nothing" pointed at the
+  briefing. The briefing can be perfect and the range still empty, so the empty range is named
+  first.
+- **`references/comment-pass.md` step 1 no longer exits 1 on the small path.** It read
+  `.base-commit` with no fallback, while `references/review-package-format.md` had the
+  `|| git merge-base` one — so the comment pass failed outright wherever the file was absent. The
+  two now resolve to the same base by construction. Step 4 also names
+  `.fledge/phases/<id>/COMMENT-PASS.md` for lite, which produces no `IMPLEMENTATION.md`.
+- **Step 4 no longer demands that every test be red.** It required each test to fail for the right
+  reason, with no provision for the guard tests an acceptance criterion like "and desktop still
+  works" needs — those are green by construction, and three of MSG-6641's four were. Tests are now
+  sorted into **defect tests** (red for the right reason, at least one required) and **guard
+  tests** (green from the start, correct to be), with step 7's mutation check named as what gives
+  the guards teeth.
+
+### Added
+
+- **A rationalization to reject:** *"the diff is right there in my working tree — the reviewer can
+  just read the files."* The loophole the commit-first fix opens. The reviewer is handed
+  `REVIEW-PACKAGE.md`, not a working tree, and a working tree abandons the determinism the package
+  format exists to enforce.
+
 ## [0.9.0] - 2026-10-19
 
 The full pipeline costs ~9 subagent spawns, two checkpoints and six review rounds. Run on a

@@ -22,13 +22,17 @@ checker, not the tests, not CI. The pass is the only check there is.
 1. **List them.** From the change's own diff, not from memory:
 
    ```bash
-   BASE=$(cat .fledge/phases/<id>/.base-commit)
+   BASE=$(cat .fledge/phases/<id>/.base-commit 2>/dev/null \
+          || git merge-base HEAD "$(git symbolic-ref --short refs/remotes/origin/HEAD)")
    git diff "$BASE" HEAD -U0 | grep -nE '^\+\s*(#|//|/\*|\*|<!--)'
    ```
 
-   (`.base-commit` is the phase fork point `/fledge:fledge-implement` records at branch
-   creation — the same base the review package will use, so your list and the reviewer's
-   list are the same list.)
+   (`.base-commit` is the phase fork point, recorded at branch creation by
+   `/fledge:fledge-implement` in the full pipeline and by `fledge-lite` step 1 on the small
+   path — the same base the review package will use, so your list and the reviewer's list are
+   the same list. The fallback mirrors `references/review-package-format.md` exactly, so the
+   two never resolve to different bases; without it this command exits 1 wherever the file is
+   absent.)
 
    Add docstrings and block comments the regex misses on the languages in the diff. If the
    list is empty, the pass is done — say so.
@@ -42,7 +46,9 @@ checker, not the tests, not CI. The pass is the only check there is.
 
 4. **Record the counts** in `IMPLEMENTATION.md` — comments added, kept, deleted, and one
    line per survivor naming its exception. That line is what the reviewer checks against the
-   diff; a bare tick is not evidence.
+   diff; a bare tick is not evidence. On the small path there is no `IMPLEMENTATION.md`
+   (`fledge-lite` runs no implementer): record the same table at
+   `.fledge/phases/<id>/COMMENT-PASS.md` and point the reviewer at it.
 
 ## The keep list (closed)
 
