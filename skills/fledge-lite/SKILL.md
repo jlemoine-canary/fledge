@@ -40,6 +40,10 @@ is now inconvenient. The trip-wire is right and you are not.
 - *"The reviewer's finding is blocking, but I can see the local fix."* If the fix is a deletion or
   a string edit, make it (step 6). If it needs a redesign, that is a trip-wire; a redesign reviewed
   by nobody is the failure mode lite is most exposed to.
+- *"The diff is right there in my working tree — the reviewer can just read the files."* It
+  cannot. It is given `REVIEW-PACKAGE.md`, and that file is compiled from a commit range. Pointing
+  a reviewer at "the working tree" also abandons the determinism rule the package exists to
+  enforce: same base and head, same package, every run. Commit, then review.
 - *"I'm at 60% context but nearly done."* "Nearly done" is the estimate that was wrong when you
   entered lite. Escalate at 50%.
 - *"I'll note the escalation in the final report instead of interrupting."* Escalation means stop
@@ -105,8 +109,15 @@ Identical to `/fledge:fledge` step 1.5, and not negotiable because the ticket is
   then `git worktree add <path> -b <git-user>/<TICKET>/<slug> origin/<default>`. If the current
   directory is already a dedicated worktree for this ticket's branch, stay put. Branch off the
   default branch unless the user explicitly wants to stack on an in-flight branch.
-- **No stale state.** `.fledge/phases/<ticket>/` and `.context/` must be absent or empty for this
-  ticket. If they exist from an earlier run, ask before reusing or clearing.
+- **Record the base commit.** `mkdir -p .fledge/phases/<ticket>` and write the branch's fork
+  point to `.fledge/phases/<ticket>/.base-commit`:
+  `git rev-parse origin/<default> > .fledge/phases/<ticket>/.base-commit`. In the full pipeline
+  `/fledge:fledge-implement` does this; lite does not run it, so lite must do it here.
+  `references/review-package-format.md` and `references/comment-pass.md` both read this path, and
+  the fork point must be pinned before `origin/<default>` moves under you.
+- **No stale state.** `.fledge/phases/<ticket>/` (beyond the `.base-commit` just written) and
+  `.context/` must be absent or empty for this ticket. If they exist from an earlier run, ask
+  before reusing or clearing.
 - **GPG.** `git config commit.gpgsign` is `true` *and* `git config user.signingkey` resolves to a
   key in `gpg --list-secret-keys`. Misconfigured → STOP and ask the user to fix it. Never
   `--no-gpg-sign`, never change the setting yourself.
@@ -157,13 +168,25 @@ Follow `/fledge:fledge-test`'s anti-pattern table and its rationalizations — t
 Lite adds two requirements:
 
 - **Every test names the regression it catches**, in the test name or a one-line docstring.
-  `test_removing_a_channel_clears_it_from_the_applied_filter`, not `test_filter_update`.
-- **Run them and confirm each fails for the *right* reason** — the real defect, not a missing
-  import, not a fixture error, not a typo in the test. An `ImportError` is not red; it is a broken
-  test file. Fix it and re-run before writing any production code.
+  `test_removing_a_channel_clears_it_from_the_applied_filter`, not `test_filter_update`. Name it
+  *behaviourally*: where the project's own comment rules forbid pointing at a ticket or a plan,
+  that applies to a test title too, so the title carries the behaviour and the ticket id stays in
+  the commit message.
+- **Sort the tests into two kinds, and hold them to different bars.** They are not all red, and a
+  skill that demands they are will cost you the ones that matter second-most:
+  - **Defect tests** encode the bug the ticket is about. **Run them and confirm each fails for the
+    *right* reason** — the real defect, not a missing import, not a fixture error, not a typo in
+    the test. An `ImportError` is not red; it is a broken test file. Fix it and re-run before
+    writing any production code. At least one test must be of this kind, or you have not
+    reproduced the defect and the plan is wrong.
+  - **Guard tests** pin behaviour the fix must *not* break — the "and X still works" half of most
+    acceptance criteria. These are **green from the moment they are written**, by construction,
+    and that is correct, not a defect in them. Do not drop them to satisfy a red bar, and never
+    contrive them red. **Step 7 is what gives them teeth**: a guard test nothing can mutate into
+    failing is tautological, and step 7 is where that is found out.
 
-Two failed attempts to get a test failing for the right reason is trip-wire 9. The usual cause is
-that the defect is not where the evidence said it was, which means the plan is wrong.
+Two failed attempts to get a *defect* test failing for the right reason is trip-wire 9. The usual
+cause is that the defect is not where the evidence said it was, which means the plan is wrong.
 
 ### 5. Implement inline
 Write the fix yourself — **no implementer subagent** — until the tests are green. Nothing else
@@ -174,9 +197,21 @@ Run the comment pass from `references/comment-pass.md` on your own diff before s
 the implementer would. It is a deletion-cost fix, so there is no version of "small ticket" that
 buys it out.
 
+Then **commit** — signed, conventional, citing the ticket. This commit is not the release of the
+work; step 8 amends it after the review and the mutation check, so the branch still carries **one**
+commit at the end. It exists because step 6's package is compiled from `BASE..HEAD`, and a change
+that lives only in the working tree compiles to an empty range: `git log` silent, `git diff`
+silent, no error anywhere. Review something uncommitted and you review nothing.
+
 ### 6. One review round
 Compile `REVIEW-PACKAGE.md` per `references/review-package-format.md` — it is a fixed git recipe,
 no subagent, and it gives the reviewer a deterministic diff instead of your description of one.
+
+**Check the package is not empty before you spawn anything.** `git log --oneline "$BASE".."$HEAD"`
+must name the step-5 commit and `git status --short` must be clean. If the range is empty, stop:
+you are about to hand your only reviewer a no-op, and it will come back having found nothing —
+which reads exactly like a clean change. The git commands succeed and print nothing, so nothing
+else in the run will tell you.
 
 Spawn **one** `fledge-reviewer-adversarial`. Its prompt must carry:
 
@@ -209,8 +244,11 @@ Break the fix on purpose, 2–3 targeted ways, and confirm a test goes red for *
 - hardcode a parameter it threads through.
 
 **Copy the files to a backup first and restore from the backup, not `git checkout`** — a checkout
-reverts everything in the path, including the tests you just wrote and anything uncommitted
-alongside them.
+reverts everything in the path to the last commit, and by this step that is the step-5 commit,
+which predates every fix you made for the reviewer at step 6. Those fixes are the most valuable
+and least recoverable thing in the tree: they were found by the only review this run gets. On the
+MSG-6641 run that recorded this step, a checkout here would have discarded 33 insertions and 30
+deletions, including both fixes for the reviewer's two major findings.
 
 A mutation that no test catches is a **blocking finding**: it means the test is tautological and
 the regression is unguarded. Fix the test and re-run before step 8.
@@ -229,8 +267,10 @@ working agreements — e.g. `ruff check` + `ruff format --check`, `pnpm exec pre
 `NODE_OPTIONS="--max_old_space_size=8192" pnpm typecheck`). Run the affected tests, not just the
 ones you wrote.
 
-Then one **signed** commit, conventional message, citing the ticket. If signing fails, stop — do
-not work around it.
+Then fold the review fixes and anything step 7 changed into the step-5 commit —
+`git commit -S --amend` — so the branch ends with one **signed** commit, conventional message,
+citing the ticket. If signing fails, stop — do not work around it. (`REVIEW-PACKAGE.md` keeps the
+pre-amend head sha. That is correct: it records what was actually reviewed.)
 
 ### 9. 🛑 Checkpoint — "Ship it?"
 The only checkpoint. Apply `references/checkpoint-protocol.md` and write
@@ -291,8 +331,10 @@ have investigated before, do the search anyway and move it to the kept list.
   defect is not where you think. Re-read the source and the comments before planning; if it still
   doesn't resolve, that is more reconstruction than lite is for — escalate.
 - **Tests won't fail for the right reason after 2 attempts** → trip-wire 9. Stop and ask.
-- **The reviewer returns nothing** → check you briefed it as the only round and gave it the diff.
-  A one-round review that found nothing on a real fix is more likely under-briefed than clean.
+- **The reviewer returns nothing** → check the package first: `git log --oneline BASE..HEAD`.
+  An empty range is the likeliest cause and the silent one — the briefing can be perfect and the
+  reviewer still has nothing to read. Then check you briefed it as the only round. A one-round
+  review that found nothing on a real fix is more likely under-fed than clean.
 - **A trip-wire fires mid-implementation** → stop where you are, commit nothing further, and ask.
   Leave the branch, `PLAN.md` and the tests in place as the seed, and say in the handoff which of
   them are green.
