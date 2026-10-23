@@ -38,6 +38,8 @@ Spawn `fledge-reviewer-constructive` with:
 - output path: `<phase-dir>/REVIEW-<MODE>-1-constructive.md`
 - output template: `references/templates/review.md`
 
+After each round returns, confirm its output file exists before the next round reads it. A reviewer that hands its review back as text has not finished: re-spawn it once with the output path restated. Do not save the text yourself; each persona writes its own file.
+
 ### 4. Round 2 — adversarial
 Spawn `fledge-reviewer-adversarial` with same inputs + path to round-1 review.
 Output: `<phase-dir>/REVIEW-<MODE>-2-adversarial.md`.
