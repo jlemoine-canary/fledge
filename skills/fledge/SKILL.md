@@ -118,6 +118,7 @@ Write `.fledge/checkpoints/<timestamp>-done.md` with:
 - All phases and their statuses
 - All passing tests and QA scenarios
 - Combined list of non-blocking nits
+- Per phase, the code review's `messaging_verdict` (risk tier + approvability) or its skip reason — information for the user, not a gate
 - Suggested next actions (PR, deploy) — **described, not taken**
 
 `AskUserQuestion`:

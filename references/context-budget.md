@@ -12,6 +12,19 @@ Every skill that spawns subagents must estimate scope upfront:
 
 Prefer **references** (file paths) over **content** (file bodies) in subagent prompts. Subagents can Read what they need.
 
+### The exception: the Messaging review
+The Messaging review (`references/messaging-review.md`) runs **in the orchestrator's own context**,
+because the skill it follows can't be handed to a subagent. The phase diff, the Macroscope prompt
+files it matches and any bowerbird references it reads all land in your context, once per review
+cycle. So:
+
+- Check context **before** the round, not after. At 50%, warn as usual and say the round is next;
+  at 70%, stop and ask before running it.
+- If `REVIEW-PACKAGE.md` records an area split, run the round one area at a time and write one
+  `REVIEW-CODE-2b-messaging.md` covering all of them.
+- Never skip the round to save context. Skipping it for budget is a silent scope cut; stopping and
+  asking is the protocol.
+
 ## Detection
 After each subagent returns, the orchestrator checks its own context usage. Claude Code exposes context pressure via internal telemetry; a rough proxy is message count + major tool-result sizes.
 

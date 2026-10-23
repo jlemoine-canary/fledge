@@ -32,7 +32,7 @@ on a migration, a risk-level-5 system, a second surface, a growing plan, or seve
 | `/fledge-auth` | Verify MCP connections (Notion, Linear, GitHub, Figma, Playwright) |
 | `/fledge-ingest` | Fetch and index source docs, search Slack/Notion/Linear for prior design work, and set the source-of-truth. `--append` to add to an existing project. |
 | `/fledge-plan` | Staff-engineer plan for a phase (may split into one level of sub-phases) |
-| `/fledge-review` | Three-round review on a plan or implementation. Pass mode `plan` or `code`. |
+| `/fledge-review` | Three-round review on a plan or implementation. Pass mode `plan` or `code`. In code mode on a canary phase that touches Messaging code, also runs the Messaging team's `messaging-pr-review`. |
 | `/fledge-test` | Write failing tests (TDD red) |
 | `/fledge-implement` | Senior-engineer TDD iteration until tests pass |
 | `/fledge-qa` | Surface-aware QA — browser flows for UI, API + side-effect checks for backend, justified skip for pure library/CLI. Iterates until the implementation matches requirements. |
@@ -68,6 +68,7 @@ Fledge maintains its own skill library. These are not pipeline stages — they k
 - `references/templates/plan.md` — the `PLAN.md` shape, incl. `## State changes and names` (settled before the migration unit) and `## Landing plan` (how the phase reaches `main`)
 - `references/qa-by-surface.md` — surface taxonomy (frontend/backend/full-stack/library-internal) and the QA each gets
 - `references/review-package-format.md` — deterministic code-mode change-set bundle (`REVIEW-PACKAGE.md`) the reviewers consume
+- `references/messaging-review.md` — when and how code review runs `messaging-pr-review` (read fresh from the canary repo, never copied) and how its findings score
 - `references/task-brief-format.md` — deterministic minimal brief (`TASK-BRIEF.md`) the implementer consumes
 - `references/skill-eval-protocol.md` — how `/fledge-eval` measures a skill's behavioral delta (Claude-Code-native A/B)
 - `references/templates/` — output templates for plan, review, implementation, qa, tests
@@ -94,6 +95,7 @@ Fledge writes state into `.fledge/` at the project root:
 │   │   ├── IMPLEMENTATION.md
 │   │   ├── REVIEW-PACKAGE.md         # deterministic change set (+ .patch) for code review
 │   │   ├── REVIEW-PLAN-final.md
+│   │   ├── REVIEW-CODE-2b-messaging.md  # canary Messaging phases only (messaging-review.md)
 │   │   ├── REVIEW-CODE-final.md
 │   │   ├── QA.md
 │   │   ├── .base-commit              # phase fork point, for a reproducible diff base
