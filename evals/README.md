@@ -52,5 +52,6 @@ must be able to point at a transcript line or produced artifact and call pass/fa
 | `fledge-plan` | `state-changes-and-naming` | A plan for an owner/suppression gate lists each state change with its outcome and settles new names before the migration unit. |
 | `fledge-plan` | `stale-sot` | The planner raises a SoT that predates and disagrees with the project description as an open question. Baseline passes; kept as a regression test. |
 | `fledge-review` | `stale-sot-and-state-gaps` | Plan review treats a SoT older than, and disagreeing with, the project description as an `Open questions` item (P1), and asks for state changes and names (P12). |
+| `fledge-review` | `messaging-pr-review-round` | Code review on a canary phase with a file CODEOWNERS gives to `pod-messaging`, or one on the send path, reads `messaging-pr-review` and writes `REVIEW-CODE-2b-messaging.md` for the integrator; any other phase skips it with a one-line reason that names unowned files. |
 | `fledge-test` | `private-function-test` | The agent tests behavior through the public API instead of calling a private `_helper()` directly. |
 | `fledge-writing-skills` | `no-baseline-failure` | The agent refuses to write a skill until it has documented a real baseline failure (no skill from imagination). |

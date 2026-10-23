@@ -42,8 +42,19 @@ Spawn `fledge-reviewer-constructive` with:
 Spawn `fledge-reviewer-adversarial` with same inputs + path to round-1 review.
 Output: `<phase-dir>/REVIEW-<MODE>-2-adversarial.md`.
 
+### 4b. (code mode only) Messaging review
+Check the gate in `references/messaging-review.md`: the canary repo, `messaging-pr-review`'s
+`SKILL.md` on disk, and a changed file that CODEOWNERS gives to `pod-messaging` or that matches
+that file's send-path list. If all three hold, **read that `SKILL.md` now and follow its review
+steps yourself** — no spawn, since the `Skill` tool refuses it and reviewers can't run skills —
+against `BASE..HEAD` from
+`REVIEW-PACKAGE.md`, and write `<phase-dir>/REVIEW-CODE-2b-messaging.md`. The reference lists the
+overrides: the phase's diff, never `gh pr checkout`; no `messaging-pr-wrapup` handoff. Otherwise
+print the one-line skip reason, naming any unowned files.
+
 ### 5. Round 3 — integrator
-Spawn `fledge-reviewer-integrator` with rounds 1 and 2.
+Spawn `fledge-reviewer-integrator` with rounds 1 and 2, plus `REVIEW-CODE-2b-messaging.md` or the
+step-4b skip line.
 Output: `<phase-dir>/REVIEW-<MODE>-final.md` with verdict `PASS`, `BLOCK`, or `ESCALATE`.
 
 ### 6. Handle the verdict
@@ -70,6 +81,8 @@ artifact_path: <path to PLAN.md or IMPLEMENTATION.md>
 final_review_path: <path to REVIEW-<MODE>-final.md>
 consequential_findings_remaining: <N — 0 on PASS>
 non_blocking_nits: <N>
+messaging_review: <path to REVIEW-CODE-2b-messaging.md | skipped — <reason> | n/a (plan mode)>
+messaging_verdict: <its risk tier + approvability verdict, for the user — never the review verdict>
 ```
 
 ## --sub-phases mode
@@ -84,14 +97,16 @@ Warn upfront if the tree implies >24 reviewer spawns (8+ artifacts × 3 personas
 - One SoT fetch per cycle (snapshot), not per persona.
 - For >10-file code change sets: split the review by area (backend/frontend, or by requirement subset). The `## Area split` line in `REVIEW-PACKAGE.md` records it (see `references/review-package-format.md`).
 - Reviewers receive paths, never artifact contents inline.
+- Step 4b is the one round that runs in your own context. Check the budget before it, not after.
 
 ## Tools needed
-- `Read`, `Write`, `Bash` (git diff, snapshot writes, history archive)
+- `Read`, `Write`, `Bash` (git diff, snapshot writes, history archive, the step-4b gate)
 - `Agent` (3 reviewer subagents + planner/implementer re-spawn on BLOCK)
 - Source-doc fetchers (matched to SoT type) for the snapshot refresh
 
 ## Related
 - Subagents: `fledge-reviewer-constructive`, `fledge-reviewer-adversarial`, `fledge-reviewer-integrator`, `fledge-planner`, `fledge-implementer`
-- References: `severity-rubric.md`, `sot-snapshot.md`, `templates/review.md`, `context-budget.md`, `review-package-format.md` (code mode)
+- References: `severity-rubric.md`, `sot-snapshot.md`, `templates/review.md`, `context-budget.md`, `review-package-format.md` (code mode), `messaging-review.md` (code mode, step 4b)
+- Read at run time, never copied: `messaging-pr-review` (canary repo, `agent-plugins/claude-plugins/msg/`)
 - Next on PASS (plan mode): `/fledge:fledge-test`
 - Next on PASS (code mode): `/fledge:fledge-qa`

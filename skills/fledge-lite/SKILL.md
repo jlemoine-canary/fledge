@@ -228,9 +228,17 @@ Spawn **one** `fledge-reviewer-adversarial`. Its prompt must carry:
   function, edge cases at the boundary the fix moved, tautological tests (C1), comment altitude
   (C10 → `references/comment-pass.md`), and the project's own service rules from `CLAUDE.md`.
 
-**Act on every finding.** Fix, in this run, every finding whose fix is a deletion or a string edit —
-severity follows the cost of the fix ("Severity follows the cost of the fix" in
-`~/.claude/shared/working-agreements.md`; applied per-item in `references/severity-rubric.md`
+When it returns, run the **Messaging review** per `references/messaging-review.md`: check its gate,
+and if it holds, read `messaging-pr-review`'s `SKILL.md` and follow its review steps yourself
+against the package's `BASE..HEAD`, writing `<phase-dir>/REVIEW-CODE-2b-messaging.md`. No spawn —
+the spawn count stays at one. Otherwise print the one-line skip reason, naming any unowned files,
+and record it in `REVIEW-CODE-final.md`. If the gate matched on the scheduling/sending pipeline itself, that is
+trip-wire 3, missed at step 3: stop and ask.
+
+**Act on every finding** — the reviewer's and the Messaging review's, scored per the reference's
+table, with its approvability verdict recorded in `REVIEW-CODE-final.md` for the user. Fix, in
+this run, every finding whose fix is a deletion or a string edit — severity follows the cost of
+the fix ("Severity follows the cost of the fix" in `~/.claude/shared/working-agreements.md`; applied per-item in `references/severity-rubric.md`
 § Carve-outs), and at that cost there is no argument for deferring. Record
 each remaining finding in `REVIEW-CODE-final.md` with a reason: the evidence you have instead, the
 ticket it is deferred to, or why it does not apply. An unrecorded finding is a dropped one. A
@@ -280,6 +288,7 @@ The only checkpoint. Apply `references/checkpoint-protocol.md` and write
 - the change bullets and the files touched;
 - tests added, and the mutations that proved them;
 - review findings: fixed vs. recorded-with-reason;
+- the Messaging review's risk tier and approvability verdict, or its skip reason;
 - anything not verified.
 
 Then `AskUserQuestion`, where the question is **how to finish**, not whether the work is right:
@@ -299,8 +308,9 @@ Print a report in this fixed shape, so lite runs stay comparable to each other a
 ## fledge-lite run report — <TICKET>
 
 **Kept:** pre-flight (worktree / branch / GPG) · direct SoT fetch + linked evidence ·
-failing-tests-first · comment pass · adversarial review (1 round) · mutation check ·
-lint/format/typecheck · signed commit · ship checkpoint
+failing-tests-first · comment pass · adversarial review (1 round) ·
+Messaging review (<ran | skipped — reason>) · mutation check · lint/format/typecheck ·
+signed commit · ship checkpoint
 
 **Skipped, and what it would have caught:**
 | Stage | Why it was safe to skip here |
@@ -369,6 +379,7 @@ have investigated before, do the search anyway and move it to the kept list.
 - Borrows unchanged from: `/fledge:fledge-test` (anti-patterns), `/fledge:fledge-review` (reviewer
   input contract), `/fledge:fledge` step 1.5 (pre-flight)
 - References: `code-review-checklist.md` (C1, C10, P10), `comment-pass.md`,
-  `review-package-format.md`, `checkpoint-protocol.md`, `severity-rubric.md`
+  `review-package-format.md`, `checkpoint-protocol.md`, `severity-rubric.md`,
+  `messaging-review.md`
 - Twin standards live in `~/.claude/shared/working-agreements.md` and
   `references/code-review-checklist.md`. This skill points at them and copies neither.

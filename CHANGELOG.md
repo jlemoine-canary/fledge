@@ -5,6 +5,55 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-10-23
+
+Code review on a canary phase that changes Messaging code now also runs the Messaging team's own PR
+review, `messaging-pr-review`. Until now the send path got the same three generic rounds as a
+frontend utility fix: the RED walkthrough noticed a `GuestJourneyMessage` send-time change was
+"risk level 5" and still did nothing different, because the skill had no step to take.
+
+`messaging-pr-review` sets `disable-model-invocation: true`, so the `Skill` tool refuses it, and
+fledge's reviewer subagents can't run skills. So the orchestrator reads its `SKILL.md` — from the
+canary repo, else the newest installed copy, fresh every run and every cycle — and follows its
+review steps itself. Fledge never copies or edits it; the Messaging team owns it.
+
+Recorded as `evals/fledge-review/messaging-pr-review-round/` — RED fails 4 of 8 criteria (3 had nothing
+to score). GREEN passes all 10 for `fledge-review` and all 9 that apply for `fledge-lite`, including
+a nested CODEOWNERS rule and another team's send-path file. All are dry-run walkthroughs, not
+pipeline runs.
+
+**Verify this release by:** a code review on a canary phase that touches the send path produces
+`.fledge/phases/<id>/REVIEW-CODE-2b-messaging.md`, and `REVIEW-CODE-final.md`'s `Reviewer notes`
+cite it with its risk tier and approvability verdict. 0.9.1 never writes that file. A phase outside
+Messaging code prints `Messaging review: skipped — <reason>` instead, ending with
+`(unowned: …)` when any changed file has no CODEOWNERS owner.
+
+### Added
+
+- **`references/messaging-review.md`** — the gate (canary repo, the file on disk, and a changed
+  file that CODEOWNERS gives to `pod-messaging` or that matches its send-path list), a recipe that
+  resolves CODEOWNERS the way GitHub does (`git check-ignore` gets nested rules wrong), a skip line
+  that names unowned files, the overrides (the phase's
+  `BASE..HEAD`, never `gh pr checkout` or `merge-base origin/master`; no `messaging-pr-wrapup`
+  handoff), the output file, and how its findings score: bug → consequential, suggestion → severity
+  rubric, question → `Reviewer notes`, nit → non-blocking. Its approvability verdict is for the
+  user and never sets PASS, BLOCK or ESCALATE.
+- **`fledge-review` step 4b** (code mode) runs it between the adversarial round and the integrator.
+  The return value gains `messaging_review` and `messaging_verdict`; `/fledge:fledge`'s ship
+  checkpoint shows the verdict per phase.
+- **`fledge-lite` step 6** runs it after the single adversarial round, inline, so the spawn count
+  stays at one. A gate match on the scheduling/sending pipeline itself is trip-wire 3, missed at
+  step 3. The ship checkpoint and closing report name the verdict or the skip reason.
+
+### Changed
+
+- **`fledge-reviewer-integrator`** takes the Messaging review as a third input, scores it per the
+  reference, records its verdict in `Reviewer notes`, and counts it in the skim-pass gate: any
+  Messaging finding forces a full pass.
+- **`references/context-budget.md`** — the Messaging review is the one round that runs in the
+  orchestrator's context. Check the budget before it, split it by area when the package does, and
+  stop and ask rather than skip it.
+
 ## [0.9.1] - 2026-10-19
 
 0.9.0's own release verification — the first real `/fledge:fledge-lite` run, on Linear MSG-6641 —
