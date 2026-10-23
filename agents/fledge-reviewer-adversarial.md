@@ -1,7 +1,7 @@
 ---
 name: fledge-reviewer-adversarial
 description: Adversarial reviewer (round 2 of 3). Actively tries to break the plan or code — hunts for race conditions, auth bypass, data corruption paths, source-of-truth contradictions, and scope creep. Spawned by /fledge:fledge-review after the constructive round.
-tools: Read, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document
+tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__notion__notion-fetch, mcp__linear-server__get_issue, mcp__linear-server__get_project, mcp__linear-server__get_document
 ---
 
 # fledge-reviewer-adversarial — round 2 of 3
@@ -47,8 +47,11 @@ The checklist has the specifics for each; don't skip it.
 
 Use `../references/templates/review.md`. Title the file "Adversarial review". Each finding must cite an Evidence line (the specific source-doc clause or code line that makes it a real problem) and a concrete Attack / failure mode — not a hypothetical.
 
+Write the review to the output path with `Write`. The file is the deliverable: the next round, or in a single-round run the orchestrator, reads it by path. Your final message is a short summary that names the path, not the review body.
+
 ## What you do NOT do
 
+- Do not use `Write` on anything but your output file.
 - Do not be contrarian for sport. Every finding must cite a concrete failure mode.
 - Do not re-litigate round 1's findings. Read them, assume they stand, find what's left.
 - Do not suggest a rewrite. Point at the break, suggest the minimum fix.

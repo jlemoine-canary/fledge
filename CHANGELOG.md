@@ -5,6 +5,41 @@ All notable changes to the fledge plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.1] - 2026-10-23
+
+`fledge-review` gives the constructive and adversarial reviewers an output path, and `fledge-lite`
+gives its single adversarial round `REVIEW-CODE-final.md`. Neither persona had `Write`; only the
+integrator did. It has been that way since the initial commit, and nothing in the history says it
+was deliberate. `Bash` was always in both allowlists, so leaving out `Write` restricted nothing.
+
+An audit of 163 past constructive and adversarial runs found that none wrote its review with
+`Write`. 141 used a `cat > <path> <<'EOF'` heredoc, MSG-6641's lite round among them. 21 handed
+the review back as text ("this harness bars writing report files"). Those files existed only
+when the orchestrator saved them unprompted, and one session's orchestrator had already added
+"if your harness forbids writing it, return the full review text" to its own spawn prompts. Where
+none did, the integrator was told to read a file nobody wrote.
+
+Recorded as `evals/fledge-review/reviewer-writes-own-file/`. RED fails 0 of 4. GREEN passes
+criterion 1 on the checkout. Criteria 2 to 4 need a real run on the installed version.
+
+**Verify this release by:** in a `/fledge:fledge-review` or `/fledge:fledge-lite` run, the
+constructive or adversarial reviewer's subagent transcript shows a `Write` call to its
+`REVIEW-<MODE>-1-constructive.md`, `REVIEW-<MODE>-2-adversarial.md` or `REVIEW-CODE-final.md`.
+Under 0.10.0 that call fails with "No such tool available: Write", and the file comes from a
+`Bash` heredoc or from the orchestrator. If the transcript still shows a heredoc, read the cache's
+`agents/fledge-reviewer-*.md` `tools:` line before anything else.
+
+### Fixed
+
+- **`fledge-reviewer-constructive` and `fledge-reviewer-adversarial` have `Write`.** Each persona's
+  `## Output format` says to write the review to the output path with it and return a summary
+  naming that path. `## What you do NOT do` limits `Write` to the output file.
+- **Both skills check that the file exists before reading it.** `fledge-review` checks after each
+  round, before the next round reads the file. `fledge-lite` checks before the Messaging review
+  and "Act on every finding", which both add to `REVIEW-CODE-final.md`. If a reviewer hands its
+  review back as text, the skill re-spawns it once and does not save the text itself, so every
+  review file has a single writer.
+
 ## [0.10.0] - 2026-10-23
 
 Code review on a canary phase that changes Messaging code now also runs the Messaging team's own PR

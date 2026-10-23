@@ -228,7 +228,11 @@ Spawn **one** `fledge-reviewer-adversarial`. Its prompt must carry:
   function, edge cases at the boundary the fix moved, tautological tests (C1), comment altitude
   (C10 → `references/comment-pass.md`), and the project's own service rules from `CLAUDE.md`.
 
-When it returns, run the **Messaging review** per `references/messaging-review.md`: check its gate,
+When the reviewer returns, confirm `REVIEW-CODE-final.md` exists. If it handed the review back as
+text instead, re-spawn it once with the output path restated. Do not save the text yourself: the
+reviewer writes its own file, and you add to it below.
+
+Then run the **Messaging review** per `references/messaging-review.md`: check its gate,
 and if it holds, read `messaging-pr-review`'s `SKILL.md` and follow its review steps yourself
 against the package's `BASE..HEAD`, writing `<phase-dir>/REVIEW-CODE-2b-messaging.md`. No spawn —
 the spawn count stays at one. Otherwise print the one-line skip reason, naming any unowned files,
